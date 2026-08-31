@@ -1,105 +1,67 @@
-<img src="images/neteclogo (2).png" alt="logo" width="300"/>
+<p align="center">
+  <img src="images/neteclogo (2).png" alt="Logo de Netec" width="300">
+</p>
 
+# Creación de sitios con SharePoint Framework (SPFx)
 
+Bienvenido al repositorio de laboratorios del curso **Creación de sitios con SharePoint Framework (SPFx)**. En estas prácticas desarrollarás soluciones modernas para SharePoint Online y Microsoft 365 mediante SPFx, React, TypeScript, Fluent UI, Microsoft Graph y las herramientas actuales de compilación y despliegue.
 
-# Creación de sitios con SPFX 
+## Objetivo
 
+Aplicar los fundamentos y las capacidades avanzadas de SPFx para crear, integrar, desplegar, administrar y modernizar soluciones empresariales dentro del ecosistema de Microsoft 365.
 
+Al finalizar los laboratorios podrás:
 
-## Plataforma de laboratorios
+- Reconocer la arquitectura y los componentes principales de SPFx.
+- Preparar un ambiente de desarrollo compatible con SPFx.
+- Crear Web Parts con React, TypeScript y Fluent UI.
+- Consumir SharePoint REST y Microsoft Graph.
+- Desarrollar extensiones para páginas, listas y navegación.
+- Integrar soluciones con Teams, Power Apps, Power Automate y Copilot.
+- Empaquetar, versionar y publicar soluciones mediante el App Catalog.
+- Aplicar prácticas de gobernanza, monitoreo y modernización.
 
+## Requisitos
 
+- Windows 11.
+- Cuenta de Microsoft 365 proporcionada para el laboratorio.
+- Acceso a SharePoint Online, Microsoft Teams y al App Catalog.
+- Permisos requeridos para crear sitios, listas y desplegar soluciones.
+- Node.js 22 LTS y npm.
+- Visual Studio Code.
+- Git.
+- SPFx 1.23.2.
+- React 17.0.1.
+- Heft, PnP PowerShell y CLI para Microsoft 365, según la práctica.
 
-Te damos la bienvenida a la **plataforma de laboratorios** del curso **Creación de sitios con SPFX**. Aquí podrás explorar diferentes tecnologías a través de prácticas guiadas. ¡Desarrolla tus habilidades y lleva tus conocimientos al siguiente nivel!
+> **Importante:** utiliza las cuentas, direcciones y permisos proporcionados por el instructor. Las URL con el formato `<tenant>.sharepoint.com` deben sustituirse por los datos del entorno asignado.
 
+## Laboratorios
 
+| N.º | Laboratorio | Descripción | Duración |
+|---:|---|---|---:|
+| 1 | [Exploración interactiva de SharePoint moderno y SPFx](Capitulo_1/README.md) | Reconoce páginas modernas, Web Parts, extensiones, el modelo client-side y la integración de SPFx con Microsoft 365. | 60 min |
+| 2 | [Construcción y preparación del ambiente de desarrollo SPFx](Capitulo_2/README.md) | Configura las herramientas, crea el primer proyecto con React y TypeScript, compila con Heft y publica un paquete `.sppkg`. | 60 min |
+| 3 | [Panel de proyectos con SPFx, React, Fluent UI y APIs](Capitulo_3/README.md) | Construye un panel de proyectos e integra componentes React, Fluent UI, SharePoint REST y Microsoft Graph. | 90 min |
+| 4 | [Extensiones avanzadas con SPFx](Capitulo_4/README.md) | Implementa Application Customizer, Field Customizer, Command Set y personalizaciones de navegación. | 90 min |
+| 5 | [Analizador Inteligente de Proyectos](Capitulo_5/README.md) | Integra SPFx con Teams, Power Apps, Power Automate, Microsoft Graph y experiencias AI-first con Copilot. | 90 min |
+| 6 | [Despliegue, versionado, gobernanza y monitoreo](Capitulo_6/README.md) | Gestiona el ciclo de vida de una solución: Git, versiones, compilación, App Catalog, publicación y auditoría. | 120 min |
+| 7 | [Migración de soluciones SharePoint clásicas a SPFx moderno](Capitulo_7/README.md) | Migra Script Editor, Master Pages, Event Receivers y proyectos basados en Gulp hacia alternativas modernas. | 120 min |
 
-## Lista de laboratorios
+**Duración práctica total estimada:** 10 horas y 30 minutos.
 
+## Recomendaciones de uso
 
+1. Realiza los laboratorios en el orden indicado.
+2. Lee el objetivo, el contexto y los requisitos antes de comenzar cada práctica.
+3. Ejecuta los comandos desde la ubicación indicada y valida cada resultado antes de continuar.
+4. Conserva las evidencias solicitadas en cada actividad.
+5. Trabaja únicamente en el tenant y los sitios de prueba asignados.
 
-Cada uno de estos laboratorios está diseñado para ofrecerte una experiencia práctica. Haz clic en los enlaces para comenzar.
+## Soporte
 
-
-
-### [Práctica 1. Nombre de la práctica](CHAPTER_01/ch01-investment-portfolio/README.md) 
-
-  - **Descripción**: xxx.
-
-  - ⏱️ **Duración estimada**: xx min.
-
-
-
-### [Práctica 2. Nombre de la práctica](CHAPTER_02/ch02-cashback-schema-design/README.md)
-
-  - **Descripción**: xxx.
-
-  - ⏱️ **Duración estimada**: xx min.
-
-
-
-### [Práctica 3. Nombre de la práctica](CHAPTER_03/ch03-cashback-dgs-service/README.md)
-
-  - **Descripción**: xxx.
-
-  - ⏱️**Duración estimada**: xx min.
-
-
-
-### [Práctica 3. Nombre de la práctica](CHAPTER_04/ch04-smart-savings-goals/README.md)
-
-  - **Descripción**: xxx.
-
-  - ⏱️**Duración estimada**: xx min.
-
-
-
-### [Práctica 3. Nombre de la práctica](CHAPTER_05/ch05-p2p-lending-federation/README.md)
-
-  - **Descripción**: xxx.
-
-  - ⏱️**Duración estimada**: xx min.
-
-
-
-### [Práctica 3. Nombre de la práctica](CHAPTER_06/ch06-fraud-detection-subscriptions/README.md)
-
-  - **Descripción**: xxx.
-
-  - ⏱️**Duración estimada**: xx min.
-
-
-
-### [Práctica 3. Nombre de la práctica](CHAPTER_07/ch07-expense-analytics-caching/README.md)
-
-  - **Descripción**: xxx.
-
-  - ⏱️**Duración estimada**: xx min.
-
-
-
-### [Práctica 3. Nombre de la práctica](CHAPTER_08/ch08-carbon-footprint-governance/README.md)
-
-  - **Descripción**: xxx.
-
-  - ⏱️**Duración estimada**: xx min.
-
-
+Si tienes preguntas sobre los laboratorios, consulta al instructor. También puedes comunicarte con [soporte@netec.com](mailto:soporte@netec.com) o visitar [Netec](https://netec.com).
 
 ---
 
-
-
-## 📬 **Contacto y más información**
-
-
-
-Si tienes alguna pregunta o necesitas más detalles, no dudes en [contactarnos](mailto:soporte@netec.com). También puedes encontrar más recursos en nuestra [página](https://netec.com).
-
-
-
----
-
-
-
-¡Gracias por visitar nuestra plataforma! No olvides revisar todos los laboratorios y comenzar tu viaje de aprendizaje hoy mismo.
+© Netec. Material de apoyo para fines educativos.
