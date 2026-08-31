@@ -813,81 +813,40 @@ StatusBadge
 
 Crear:
 
-components/StatusBadge.tsx
+`components/StatusBadge.tsx`
 
 Código:
 
-```text
+{% raw %}
+```tsx
 import * as React from 'react';
-```
-
-```text
 import { Label } from '@fluentui/react';
-```
 
-```text
 export default function StatusBadge(
-```
-
-```text
-{ status }: { status: string }
-```
-
+  { status }: { status: string }
 ) {
+  const color =
+    status === 'Completado'
+      ? 'green'
+      : status === 'En progreso'
+        ? 'orange'
+        : 'gray';
 
-```text
-const color =
-```
-
-status === 'Completado'
-
-? 'green'
-
-: status === 'En progreso'
-
-? 'orange'
-
-: 'gray';
-
-```text
-return (
-```
-
-```text
-<Label
-```
-
-styles={{
-
-root: {
-
-color,
-
-fontWeight: 'bold'
-
-```text
+  return (
+    <Label
+      styles={{
+        root: {
+          color,
+          fontWeight: 'bold'
+        }
+      }}
+    >
+      {status}
+    </Label>
+  );
 }
 ```
-
-```text
-}}
-```
-
->
-
-```text
-{status}
-```
-
-```text
-</Label>
-```
-
-);
-
-```text
-}
-```
+{% endraw %}
 
 ### 4.5. Agregar iconos
 
