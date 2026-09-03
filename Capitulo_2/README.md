@@ -1,810 +1,812 @@
-# LABORATORIO 2
 
-Construcción y preparación del ambiente de desarrollo SPFx
+## Lab 2 --- Desarrollo de soluciones SPFx con React y Heft
 
-Duración: 60 minutos
+**Duración sugerida:** 90 minutos
 
-## 1. Objetivo
+Lab 2 --- Desarrollo de soluciones SPFx con React y Heft
 
-Al finalizar el laboratorio, el participante habrá preparado un ambiente local para el desarrollo de soluciones SPFx, verificando la instalación de Node.js, npm, Git y Visual Studio Code, así como de las herramientas requeridas.
+# Módulo 2 --- SPFx + React + Heft · SPFx 1.23.2
+Duración sugerida: 90 minutos
 
-También habrá creado un proyecto SPFx con React y reconocido su estructura, identificando el papel que desempeñan TypeScript y React dentro de la solución.
+## Objetivo
 
-A partir de este proyecto, habrá utilizado un componente React con useState, comprendido el cambio del proceso de construcción de Gulp a Heft y compilado y ejecutado la solución mediante Heft. Finalmente, habrá creado un repositorio Git y una rama de desarrollo, generado el paquete .sppkg, publicado la solución en un tenant de prueba y validado el Web Part dentro de SharePoint.
+Preparar un ambiente de desarrollo reproducible para SharePoint
+Framework (SPFx), crear un Web Part con React y TypeScript, comprender
+la estructura del proyecto, compilar y ejecutar la solución mediante
+Heft, registrar cambios con Git, generar el paquete `.sppkg` y completar
+el proceso de publicación controlada en SharePoint Online.
 
-## 2. Contexto
+## Alcance
 
-En el Laboratorio 1 el participante exploró qué es SPFx y por qué representa el modelo moderno de extensibilidad de SharePoint.
+El módulo recorre el ciclo práctico desde la preparación del equipo
+hasta la validación de un Web Part publicado. Se utiliza SPFx 1.23.2 con
+el toolchain moderno basado en Heft. El proyecto se crea para SharePoint
+Online y utiliza React 17.0.1. El módulo incluye una introducción breve
+al cambio histórico de Gulp a Heft, pero no crea ni migra un proyecto
+Gulp.
 
-Ahora comienza el desarrollo.
+## Nomenclatura del participante
 
-El desarrollo comienza en el ambiente local, donde Node.js, npm, Git y Visual Studio Code proporcionan las herramientas necesarias para trabajar con el proyecto. Dentro del proyecto se utilizan TypeScript y React para desarrollar el Web Part, mientras Heft coordina el proceso de compilación y empaquetado. El resultado del empaquetado es un archivo .sppkg que se publica en el App Catalog para que la solución pueda utilizarse en SharePoint Online.
+XXX representa las iniciales del participante. Utiliza el sufijo XXX en
+los recursos que pueden entrar en conflicto dentro del tenant
+compartido.
 
-AMBIENTE LOCAL
+Solución: `spfx-lab2-webpart-XXX`
 
-- Node.js 22
-- npm
-- VS Code
-- TypeScript
-- React 17.0.1
-- Heft
-- Git
-Proyecto SPFx
+Web Part: `HelloSpfxXXX`
 
-TypeScript React
+Sitio de validación: Portal-ProyectosXXX, cuando el instructor asigne un
+sitio específico.
 
-- Heft
-Build / Package
+Lista de referencia, si se utiliza en actividades posteriores:
+Proyectos.
 
-- .sppkg
-- App Catalog
-- SharePoint Online
-El cambio fundamental respecto a proyectos SPFx antiguos es el toolchain basado en Heft. Microsoft indica que desde SPFx 1.22 los proyectos nuevos utilizan Heft en lugar del modelo basado en Gulp.
+## Requisitos
 
-## 3. Al finalizar el laboratorio
+Windows con acceso para instalar Node.js y herramientas de desarrollo.
 
-Al terminar tendremos:
+Node.js 22.23.2 y npm disponibles en PATH.
 
-spfx-lab2-webpart/
+PowerShell 7.4 o posterior para PnP.PowerShell.
 
-- src/
-- webparts/
-- HelloSpfx/
-- config/
-- sharepoint/
-- package.json
-- tsconfig.json
-- heft.json / configuración Heft
-- README.md
-Y conceptualmente:
+Git y Visual Studio Code instalados.
 
-Código
+Conexión a Internet para instalar paquetes npm.
 
-TypeScript + React
+Cuenta de Microsoft 365 con acceso al sitio de SharePoint Online
+asignado.
 
-- Heft
-- Build
-- Package
-- .sppkg
-- App Catalog
-- SharePoint
-1. Verificar el ambiente de desarrollo.
+El App Catalog del tenant es administrado por el instructor; el
+participante no crea ni administra el App Catalog.
 
-2. Instalar las herramientas necesarias.
+## Baseline técnico del módulo
 
-3. Crear el primer proyecto SPFx.
+  -----------------------------------------------------------------------
+  Componente              Versión / valor         Uso
+  ----------------------- ----------------------- -----------------------
+  Node.js                 22.23.2                 Runtime del toolchain
 
-4. Explorar la estructura del proyecto.
+  npm                     10.9.8                  Gestión de paquetes
 
-5. Comprender el papel de TypeScript.
+  SPFx                    1.23.2                  Framework
 
-6. Implementar estado con React y useState.
+  React                   17.0.1                  UI del Web Part
 
-7. Compilar el proyecto mediante Heft.
+  TypeScript              5.8.x                   Tipado y compilación
 
-8. Comparar conceptualmente Gulp y Heft.
+  Heft                    global disponible;      Build y desarrollo
+                          proyecto resuelve su    
+                          versión compatible      
 
-9. Ejecutar el Web Part localmente.
+  PowerShell              7.4+                    PnP.PowerShell
 
-10. Inicializar Git y crear una rama de trabajo.
+  PnP.PowerShell          3.x                     Interacción
+                                                  administrativa con
+                                                  SharePoint
 
-11. Modificar el Web Part y registrar el cambio.
+  CLI for Microsoft 365   11.x                    Comandos Microsoft 365
 
-12. Generar el paquete .sppkg.
+  Git                     2.x                     Control de versiones
+  -----------------------------------------------------------------------
 
-13. Publicar e instalar la solución en SharePoint.
+La matriz oficial de compatibilidad de Microsoft indica para SPFx 1.23.2
+Node.js v22, TypeScript 2.9--5.8 y React 17.0.1. El proyecto generado
+debe conservar las versiones que el scaffolding instala; no actualices
+React, TypeScript u otras dependencias del proyecto por cuenta propia
+durante el laboratorio.
 
-14. Validar el ciclo completo.
+## ACTIVIDAD 1 --- Ajustar Node.js al baseline del laboratorio
 
-## 4. Actividades
+**Objetivo.** Dejar el equipo en Node.js 22.23.2 antes de instalar o
+reinstalar las herramientas globales.
 
-## ACTIVIDAD 1
+Comprobar la versión actual.
 
-Verificación del ambiente
+**PowerShell 7**
 
-Esta comprobación se realiza antes de instalar herramientas para detectar incompatibilidades desde el inicio.
-
-### Paso 1. Abrir PowerShell
-
-Abre:
-
-Inicio > Windows PowerShell
-
-Ejecuta:
-
-```powershell
+``` powershell
 node --version
-```
-
-Después:
-
-```powershell
 npm --version
+where.exe node
+where.exe npm
 ```
 
-Node debe mostrar una versión 22.x.
+Si Node.js ya muestra v22.23.2, conserva la instalación y continúa con
+la verificación.
 
-Para SPFx 1.23.2, Microsoft documenta Node.js v22 como versión compatible.
+![Captura de pantalla](Laboratorio2_assets/images/image1.png)
 
-### Paso 2. Verificar Git
+Instalar las herramientas globales después de cambiar de versión de
+Node.js.
 
-Ejecuta:
+**PowerShell 7**
 
-```powershell
+``` powershell
+npm install -g yo @microsoft/generator-sharepoint@1.23.2 @rushstack/heft @pnp/cli-microsoft365
+```
+
+![Captura de pantalla](Laboratorio2_assets/images/image2.png)
+
+## ACTIVIDAD 2 --- Verificar herramientas
+
+**Objetivo.** Comprobar que las herramientas que se utilizarán durante
+el módulo responden desde la sesión de PowerShell 7.
+
+**PowerShell 7**
+
+``` powershell
 git --version
-```
-
-Debe aparecer una versión de Git. Git permitirá registrar el estado del proyecto y posteriormente trabajar con ramas.
-
-El módulo destaca precisamente que Git permite mantener historial, ramas y trazabilidad de cambios.
-
-### Paso 3. Verificar Visual Studio Code
-
-Ejecuta:
-
-```powershell
 code --version
+pwsh --version
 ```
 
-Si el comando no está disponible, abre Visual Studio Code manualmente.
+![Captura de pantalla](Laboratorio2_assets/images/image3.png)
 
-### Paso 4. Verificar extensiones
+Verificar las herramientas globales.
 
-En VS Code verifica que estén instaladas:
+**PowerShell 7**
 
-- ESLint
-- Prettier
-- React Developer Tools
-Estas extensiones forman parte del entorno propuesto en el módulo para calidad, formato y depuración.
-
-## ACTIVIDAD 2
-
-Las herramientas instaladas en esta actividad cumplen funciones diferentes: Heft se utiliza para construir la solución, PnP PowerShell para interactuar con SharePoint Online y el CLI para Microsoft 365 para ejecutar tareas sobre Microsoft 365.
-
-Instalar las herramientas que se utilizarán para crear, compilar, administrar y desplegar soluciones SPFx.
-
-Instalar las herramientas del laboratorio
-
-El ambiente base ya contiene Node.js, Git y VS Code.
-
-Ahora instalaremos las herramientas que el desarrollador utilizará durante el curso.
-
-### Paso 1. Instalar Heft
-
-Ejecuta:
-
-```powershell
-npm install -g @rushstack/heft
-```
-
-Verifica:
-
-```powershell
-heft --version
-```
-
-Heft es el orquestador moderno del proceso de build de SPFx.
-
-### Paso 2. Instalar PnP PowerShell
-
-Si el entorno del laboratorio todavía no lo tiene:
-
-```powershell
-Install-Module PnP.PowerShell -Scope CurrentUser
-```
-
-Verifica:
-
-```powershell
-Get-Module PnP.PowerShell -ListAvailable
-```
-
-Lo utilizaremos posteriormente para interactuar con SharePoint Online y apoyar el despliegue.
-
-### Paso 3. Instalar CLI para Microsoft 365
-
-Si aún no está instalado:
-
-```powershell
-npm install -g @pnp/cli-microsoft365
-```
-
-Verifica:
-
-```powershell
+``` powershell
+npm list -g @microsoft/generator-sharepoint --depth=0
+npm list -g @rushstack/heft --depth=0
 m365 version
 ```
 
-El CLI para Microsoft 365 proporciona comandos administrativos y de desarrollo que serán útiles para automatizar tareas sobre Microsoft 365.
+Verificar PnP.PowerShell.
 
-Además, Microsoft documenta actualmente el uso de este CLI para analizar y actualizar proyectos SPFx hacia versiones modernas.
+**PowerShell 7**
 
-## ACTIVIDAD 3
-
-Crear el primer proyecto SPFx
-
-Crear la base de un Web Part SPFx utilizando React y TypeScript.
-
-Sin embargo, para SPFx 1.23.2 en un curso orientado a un entorno estable, conviene documentar claramente esta diferencia:
-
-El nuevo spfx-cli existe y Microsoft lo está posicionando como reemplazo de Yeoman.
-
-La documentación actual todavía lo identifica como una herramienta pre-release.
-
-Microsoft mantiene el generador de SharePoint como mecanismo de instalación para SPFx estable.
-
-### Paso 1. Instalar Yeoman y el generador SPFx
-
-Ejecuta y verifica:
-
-```powershell
-npm install -g yo @microsoft/generator-sharepoint
+``` powershell
+Get-InstalledModule PnP.PowerShell
 ```
 
-```powershell
+![Captura de pantalla](Laboratorio2_assets/images/image4.png)
+
+Si PnP.PowerShell no está instalado.
+
+**PowerShell 7**
+
+``` powershell
+Install-Module PnP.PowerShell -Scope CurrentUser
+Get-InstalledModule PnP.PowerShell
+```
+
+![Captura de pantalla](Laboratorio2_assets/images/image5.png)
+
+## ACTIVIDAD 3 --- Preparar el generador SPFx 1.23.2
+
+**Objetivo.** Comprobar que Yeoman y el generador fijado para el módulo
+están disponibles antes de crear la solución.
+
+**PowerShell 7**
+
+``` powershell
+npm install -g yo @microsoft/generator-sharepoint@1.23.2
+npm list -g @microsoft/generator-sharepoint --depth=0
 yo --version
-```
-
-```powershell
 yo @microsoft/sharepoint --help
 ```
 
-### Paso 2. Crear carpeta de trabajo
+![Captura de pantalla](Laboratorio2_assets/images/image6.png)
 
-```powershell
-mkdir C:\SPFx
+![Captura de pantalla](Laboratorio2_assets/images/image7.png)
+
+No uses una versión diferente del generador para crear el proyecto del
+laboratorio. La versión del generador determina el scaffolding y el
+conjunto de dependencias que se instalarán.
+
+## ACTIVIDAD 4 --- Crear el proyecto SPFx
+
+**Objetivo.** Generar la solución spfx-lab2-webpart-XXX con un Web Part
+React para SharePoint Online.
+
+Crear la carpeta de trabajo.
+
+**PowerShell 7**
+
+``` powershell
+New-Item -ItemType Directory -Path C:\SPFx -Force
+Set-Location C:\SPFx
 ```
 
-```powershell
-cd C:\SPFx
-```
+![Captura de pantalla](Laboratorio2_assets/images/image8.png)
 
-### Paso 3. Crear el proyecto
+Ejecutar el generador.
 
-Ejecuta:
+**PowerShell 7**
 
-```powershell
+``` powershell
 yo @microsoft/sharepoint
 ```
 
-El asistente solicitará diferentes valores.
+En el asistente interactivo, utiliza los valores siguientes cuando
+aparezcan:
 
-Solution name: spfx-lab2-webpart
+Solution name: `spfx-lab2-webpart-XXX`
 
-Which type of client-side component: WebPart
+Client-side component: WebPart
 
-What is your Web part name? HelloSpfx
+Web Part name: `HelloSpfxXXX`
 
-Which template would you like to use? • React
+Template: React
 
-Los demás valores pueden mantenerse con las opciones predeterminadas del laboratorio.
+![Captura de pantalla](Laboratorio2_assets/images/image9.png)
 
-En este paso se ha creado una solución SPFx estructurada que integra:
+![Captura de pantalla](Laboratorio2_assets/images/image10.png)
 
-No creamos todavía una aplicación completa. Creamos un proyecto SPFx estructurado que contiene:
+Durante la creación de un proyecto, el generador de SharePoint solicita
+seleccionar el tipo de componente que se desea desarrollar. Las opciones
+principales son:
 
-- Configuración
-- +
-- TypeScript
-- +
-- React
-- +
-- SPFx
-- +
-- Heft
-- +
-- Packaging
-## ACTIVIDAD 4
+  -----------------------------------------------------------------------
+  Componente                          Descripción
+  ----------------------------------- -----------------------------------
+  WebPart                             Componente visual que se agrega a
+                                      una página de SharePoint. Permite
+                                      construir interfaces interactivas
+                                      con React, HTML, CSS y TypeScript,
+                                      y puede consumir datos de
+                                      SharePoint, Microsoft Graph u otros
+                                      servicios. Es el componente
+                                      utilizado en este laboratorio.
 
-La estructura permite distinguir el código fuente, la configuración del proyecto y los archivos que intervienen en el empaquetado y despliegue.
+  Extension                           Componente que permite extender o
+                                      modificar determinadas experiencias
+                                      de SharePoint sin crear un Web Part
+                                      tradicional. Puede utilizarse, por
+                                      ejemplo, para agregar acciones a
+                                      listas, personalizar campos o
+                                      ejecutar código en determinados
+                                      puntos de la interfaz.
 
-Reconocer la estructura de carpetas y archivos que componen un proyecto SPFx.
+  Library                             Componente destinado a crear una
+                                      biblioteca de código reutilizable
+                                      para otros componentes SPFx. Es
+                                      apropiado cuando se desea compartir
+                                      funciones, clases, componentes o
+                                      lógica común entre diferentes
+                                      soluciones.
 
-Explorar la estructura del proyecto
+  Adaptive Card Extension             Componente orientado a Viva
+                                      Connections que utiliza Adaptive
+                                      Cards para presentar información y
+                                      acciones de forma compacta e
+                                      interactiva. Puede utilizarse para
+                                      construir experiencias que se
+                                      integren en el dashboard de Viva
+                                      Connections.
+  -----------------------------------------------------------------------
 
-Abre la carpeta en VS Code:
+En SPFx 1.23.2 el asistente interactivo no presenta la antigua pregunta
+de Tenant-wide deployment. La configuración de ámbito se comprobará y
+ajustará explícitamente en la configuración de empaquetado en una
+actividad posterior.
 
-C:\SPFx\spfx-lab2-webpart
+![Captura de pantalla](Laboratorio2_assets/images/image11.png)
 
-### Paso 1. Identificar las carpetas
+## ACTIVIDAD 5 --- Configurar el proyecto para un tenant compartido
 
-Localiza:
+**Objetivo.** Evitar que la solución del participante se configure para
+despliegue tenant-wide en el App Catalog compartido.
 
-- src/
-- config/
-- sharepoint/
-### Paso 2. Identificar package.json
+Abrir la configuración de empaquetado.
 
-Abre:
+**Ruta del archivo**
+
+``` powershell
+C:\SPFx\spfx-lab2-webpart-XXX\config\package-solution.json
+```
+
+Abre el archivo `package-solution.json` y localiza la propiedad
+`skipFeatureDeployment` dentro de solution.
+
+**Fragmento que debe quedar en package-solution.json**
+
+"`skipFeatureDeployment`": false
+
+Si la propiedad aparece con true, cámbiala a false. Si el generador no
+la muestra, agrega la propiedad dentro del objeto solution, sin eliminar
+otras propiedades generadas por el scaffolding.
+
+Comprobar la configuración.
+
+**PowerShell 7**
+
+``` powershell
+Set-Location C:\SPFx\spfx-lab2-webpart-XXX
+Get-Content .\config\package-solution.json
+```
+
+**Resultado esperado.** package-solution.json contiene
+skipFeatureDeployment con valor false. La solución podrá publicarse en
+el App Catalog sin solicitar su activación automática en todos los
+sitios.
+
+No selecciones opciones de publicación tenant-wide en el App Catalog. En
+este módulo el instructor publicará el paquete en el catálogo compartido
+y la validación se realizará en el sitio asignado.
+
+## ACTIVIDAD 6 --- Reconocer la estructura del proyecto
+
+**Objetivo.** Identificar las carpetas y archivos principales creados
+por el scaffolding moderno basado en Heft.
+
+Abrir el proyecto en Visual Studio Code.
+
+**PowerShell 7**
+
+``` powershell
+Set-Location C:\SPFx\spfx-lab2-webpart-XXX
+code .
+```
+
+Revisar las carpetas principales.
+
+``` powershell
+src\webparts\helloSpfxXXX\
+config\
+```
+
+node_modules\
+
+Revisar archivos.
 
 package.json
 
-Ubica:
-
-- @microsoft/sp-core-library
-- @microsoft/sp-webpart-base
-- react
-- react-dom
-package.json contiene las dependencias que el proyecto necesita para compilar y ejecutar sus componentes.
-
-La presencia de react y react-dom confirma que la solución utiliza React para construir la interfaz del Web Part.
-
-### Paso 3. Identificar TypeScript
-
-Ubica:
-
 tsconfig.json
 
-Este archivo contiene la configuración utilizada por TypeScript.
+``` powershell
+config\rig.json
+config\package-solution.json
+config\serve.json
+```
 
-### Paso 4. Identificar el Web Part
+Identificar el componente.
 
-Dentro de:
+**Ruta**
 
-src/webparts/
+``` powershell
+src\webparts\helloSpfxXXX\components\HelloSpfxXXX.tsx
+src\webparts\helloSpfxXXX\components\IHelloSpfxXXXProps.ts
+```
 
-localiza:
+El proyecto moderno utiliza `config/rig.json` para referenciar el rig de
+SPFx. No crees un `config/heft.json` para este laboratorio. Un heft.json
+de proyecto solo es necesario cuando se desea extender explícitamente la
+configuración compartida del rig.
 
-HelloSpfx
+**Resultado esperado.** Puedes distinguir código fuente, configuración,
+dependencias, configuración de TypeScript y archivos del toolchain.
 
-Dentro encontrarás los archivos TypeScript y React generados por el scaffolding.
+## ACTIVIDAD 7 --- Trabajar con TypeScript y tipado estático
 
-Comprobación: identifica qué elemento contiene el código del Web Part, cuál contiene las dependencias del proyecto y cuál contiene la configuración de TypeScript.
+**Objetivo.** Definir una interfaz, crear un objeto tipado y observar
+cómo TypeScript detecta una incompatibilidad.
 
-## ACTIVIDAD 5
+Abrir el archivo.
 
-TypeScript como base del proyecto
+**Archivo**
 
-La interfaz hace explícito qué propiedades puede contener un proyecto. Si se asigna un valor incompatible con el tipo declarado, TypeScript puede detectarlo durante el desarrollo o la compilación.
+``` powershell
+src\webparts\helloSpfxXXX\components\HelloSpfxXXX.tsx
+```
 
-Reconocer cómo TypeScript define estructuras de datos y aporta tipado estático al código del Web Part.
+Incorporar la interfaz y el objeto.
 
-El módulo presenta TypeScript como el lenguaje base de SPFx y destaca interfaces, tipado estático, autocompletado y orientación a objetos.
+Agregar antes del componente React
 
-### Paso 1. Crear una interfaz
-
-Dentro del componente React localiza el archivo .tsx.
-
-Agrega temporalmente:
-
-```powershell
+``` powershell
 interface IProject {
-```
-
-```powershell
 id: number;
-```
-
-```powershell
 name: string;
-```
-
-```powershell
 owner: string;
-```
-
-```powershell
 }
-```
-
-Después:
-
-```powershell
 const project: IProject = {
-```
-
-```powershell
 id: 1,
-```
-
-```powershell
 name: "Portal SPFx",
-```
-
-```powershell
 owner: "Laboratorio"
-```
-
-```powershell
 };
 ```
 
-### Paso 2. Mostrar información
-
-Puedes utilizar:
-
 console.log(project.name);
 
-TypeScript permite definir explícitamente la estructura esperada de un objeto.
+Provocar el error de tipos.
 
-IProject
+Cambia temporalmente id: 1 por id: "1" y guarda el archivo.
 
-- id: number
-- name: string
-- owner: string
-Esto corresponde al ejemplo conceptual incluido en el módulo.
+Desde la raíz del proyecto
 
-Comprobación: cambia temporalmente `id: 1` por `id: "1"` y ejecuta la compilación. Observa el error de tipos y después vuelve a dejar `id: 1`.
+``` powershell
+Set-Location C:\SPFx\spfx-lab2-webpart-XXX
+heft build
+```
 
-## ACTIVIDAD 6
+Observa el error de TypeScript. Después restaura id: 1.
 
-React y estado
+**Resultado esperado.** El build identifica que string no es compatible
+con number y, después de restaurar el valor, el proyecto queda listo
+para continuar.
 
-El import de React permite utilizar React.useState. useState devuelve dos valores: el estado actual y la función que debe utilizarse para actualizarlo.
+## ACTIVIDAD 8 --- Implementar estado con React.useState
 
-Modificar el Web Part para comprender cómo React mantiene un estado y actualiza la interfaz cuando ese estado cambia.
+**Objetivo.** Agregar estado local al Web Part y actualizar la interfaz
+mediante un botón.
 
-El módulo presenta React como framework recomendado y destaca componentes reutilizables, hooks e integración con Fluent UI.
+Declarar el estado dentro del componente.
 
-### Paso 1. Localizar el componente React
+Archivo:
+src`\webparts`{=tex}`\helloSpfxXXX`{=tex}`\components`{=tex}\`HelloSpfxXXX\`.tsx
 
-En el explorador de VS Code, abre la carpeta del Web Part y localiza el componente React generado por el scaffolding:
-
-src/webparts/helloSpfx/components/HelloSpfx.tsx
-
-### Paso 2. Importar React y declarar el estado
-
-En la parte superior de HelloSpfx.tsx, junto con los demás imports, agrega o verifica:
-
-Después, dentro del componente, declara el estado:
-
-```powershell
+``` powershell
 const [count, setCount] = React.useState(0);
 ```
 
-### Paso 3. Mostrar el valor del estado en el JSX
+Mostrar el estado.
 
-Dentro del método o función que devuelve el JSX del componente, agrega el siguiente párrafo en la zona donde quieres mostrar el contador:
+Dentro del JSX
 
-```powershell
+``` powershell
 <p>Has hecho clic {count} veces.</p>
 ```
 
-### Paso 4. Agregar el botón que modifica el estado
+Agregar el botón.
 
-```powershell
+Dentro del JSX
+
+``` powershell
 <button onClick={() => setCount(count + 1)}>
 ```
 
 Incrementar
 
+``` powershell
 </button>
-
-El ejemplo corresponde al concepto de useState presentado en el módulo.
-
-El estado se inicializa con el valor 0. En ese momento, el Web Part debe mostrar:
-
-- Has hecho clic 0 veces.
-Al pulsar el botón, se ejecuta setCount(count + 1). React recibe el nuevo valor de estado y vuelve a renderizar el componente para reflejar el cambio en la interfaz.
-
-Después de un clic, el valor pasa a 1; después de dos clics, pasa a 2. El texto mostrado se actualiza porque {count} siempre representa el valor actual del estado.
-
-No se debe modificar count directamente. La actualización debe realizarse mediante setCount(), que es la función proporcionada por useState para cambiar el estado.
-
-La declaración const [count, setCount] = React.useState(0) crea el estado count y la función setCount. El argumento 0 establece el valor inicial.
-
-Comprobación: ejecuta el Web Part y verifica los estados 0, 1 y 2 después de interacciones consecutivas con `Incrementar`.
-
-## ACTIVIDAD 7
-
-Un build exitoso indica que las herramientas del proyecto pueden procesar el código y generar los artefactos necesarios para continuar con la prueba.
-
-Compilar el proyecto SPFx mediante Heft y comprobar que el código puede procesarse sin errores.
-
-Compilar con Heft
-
-Esta actividad sustituye el flujo tradicional basado en Gulp.
-
-### Paso 1. Instalar dependencias
-
-Desde la raíz del proyecto:
-
-```powershell
-npm install
 ```
 
-### Paso 2. Ejecutar build
+Código completo del componente.
 
-Ejecuta:
+Archivo:
+src`\webparts`{=tex}`\helloSpfxXXX`{=tex}`\components`{=tex}\`HelloSpfxXXX\`.tsx
 
-```powershell
+``` powershell
+import * as React from "react";
+import { IHelloSpfxXXXProps } from "./IHelloSpfxXXXProps";
+interface IProject {
+id: number;
+name: string;
+owner: string;
+}
+const project: IProject = {
+id: 1,
+name: "Portal SPFx",
+owner: "Laboratorio"
+};
+const HelloSpfxXXX: React.FC<IHelloSpfxXXXProps> = (props) => {
+const [count, setCount] = React.useState(0);
+```
+
+console.log(project.name);
+
+``` powershell
+return (
+<div>
+<h2>¡Hola SPFx con React!</h2>
+<p>Proyecto: {project.name}</p>
+<p>Propietario: {project.owner}</p>
+<p>Usuario: {props.userDisplayName ?? "Participante"}</p>
+<p>Has hecho clic {count} veces.</p>
+<button onClick={() => setCount(count + 1)}>
+```
+
+Incrementar
+
+``` powershell
+</button>
+</div>
+);
+};
+export default HelloSpfxXXX;
+```
+
+**Resultado esperado.** El contador inicia en 0 y aumenta en uno cada
+vez que se pulsa Incrementar.
+
+## ACTIVIDAD 9 --- Instalar o sincronizar dependencias y compilar con Heft
+
+**Objetivo.** Comprobar que el proyecto procesa correctamente
+TypeScript, React, ESLint y Webpack.
+
+**PowerShell 7**
+
+``` powershell
+Set-Location C:\SPFx\spfx-lab2-webpart-XXX
+npm install
 heft build
 ```
 
-La compilación debe terminar sin errores.
+**Resultado esperado.** El build termina sin errores. La salida de Heft
+muestra las tareas de compilación y el uso de TypeScript, ESLint y
+Webpack. En esta etapa todavía no se genera el .sppkg.
 
-Durante la compilación, Heft coordina las herramientas configuradas para procesar el proyecto:
+## ACTIVIDAD 10 --- Comprender Gulp y Heft
 
-- TypeScript
-- ESLint
-- Webpack
-- Build
-Heft funciona como orquestador del proceso.
+**Objetivo.** Reconocer la diferencia entre el toolchain histórico
+basado en Gulp y el modelo moderno utilizado por SPFx 1.23.2.
 
-En esta actividad solo se construye la solución. El archivo `.sppkg` se generará posteriormente, en la Actividad 12.
+Gulp: utilizaba tradicionalmente gulpfile.js y tareas definidas mediante
+un archivo de tareas.
 
-## ACTIVIDAD 8
+Heft: coordina tareas mediante configuración y plugins del toolchain.
 
-Los proyectos SPFx anteriores utilizaban un flujo de construcción basado en Gulp. Los proyectos actuales utilizan Heft como orquestador del proceso de construcción. En esta actividad compararás ambos modelos y comprobarás cuál utiliza el proyecto que acabas de crear.
+SPFx 1.22 y posteriores utilizan Heft para proyectos nuevos.
 
-Identificar las principales diferencias entre el flujo basado en Gulp y el modelo basado en Heft, y reconocer cuál utiliza el proyecto actual.
+Comprobar el proyecto actual.
 
-### Paso 1. Comparar los modelos
+**Ruta**
 
-Completa la siguiente información utilizando el contenido de esta sección:
+``` powershell
+C:\SPFx\spfx-lab2-webpart-XXX\config\rig.json
+```
 
-Gulp: gulpfile.js, scripts personalizados y tareas definidas mediante un archivo de tareas.
+Abre rig.json y comprueba que referencia la configuración del rig de
+SPFx.
 
-Heft: configuración del proyecto y tareas coordinadas mediante el toolchain de Heft.
+**Resultado esperado.** El proyecto utiliza Heft y no contiene un
+gulpfile.js generado como parte del proyecto moderno.
 
-### Paso 2. Revisar el proyecto
+## ACTIVIDAD 11 --- Ejecutar el Web Part localmente
 
-En la raíz del proyecto, localiza heft.json y package.json. Comprueba que el proyecto utiliza Heft para las tareas de construcción.
+**Objetivo.** Levantar el servidor local y cargar el Web Part en el
+SharePoint Online Workbench disponible durante el periodo de transición.
 
-### Paso 3. Registrar las diferencias
+Confiar en el certificado de desarrollo.
 
-Escribe dos diferencias concretas entre Gulp y Heft.
+**PowerShell 7**
 
-### Paso 4. Comprobar
+``` powershell
+Set-Location C:\SPFx\spfx-lab2-webpart-XXX
+heft trust-dev-cert
+```
 
-Completa la afirmación: El proyecto creado en este laboratorio utiliza __________ para coordinar el proceso de construcción.
+Configurar el sitio de pruebas para el Workbench.
 
-La actividad no requiere crear ni migrar un proyecto basado en Gulp.
+El proyecto contiene config/`serve.json` con un initialPage que utiliza
+el marcador {tenantDomain}. Define la variable
+`SPFX_SERVE_TENANT_DOMAIN` con el host y la ruta del sitio, sin incluir
+https://.
 
-## ACTIVIDAD 9
+**PowerShell 7**
 
-La prueba local permite detectar problemas de código e interfaz antes de involucrar el App Catalog o el tenant de SharePoint.
+``` powershell
+$env:SPFX_SERVE_TENANT_DOMAIN = "azurenetecgp1.sharepoint.com/sites/spfxlab"
+$env:SPFX_SERVE_TENANT_DOMAIN
+```
 
-Ejecutar el Web Part en el entorno local y comprobar su comportamiento antes del despliegue.
+**Resultado esperado.** La segunda línea muestra
+azurenetecgp1.sharepoint.com/sites/spfxlab.
 
-Ejecutar el Web Part localmente
+Iniciar Heft.
 
-### Paso 1. Iniciar Heft
+**PowerShell 7**
 
-Desde la raíz:
-
-```powershell
+``` powershell
 heft start
 ```
 
-Microsoft documenta heft start para levantar el entorno local de desarrollo del Web Part.
+Cuando se abra el navegador, la URL debe utilizar una sola vez el
+esquema https y debe apuntar al sitio de SharePoint, por ejemplo:
+https://azurenetecgp1.sharepoint.com/sites/spfxlab/\_layouts/15/workbench.aspx.
 
-### Paso 2. Abrir el entorno local
+Si aparece una solicitud para permitir scripts de depuración, selecciona
+Allow. Después agrega el Web Part mediante el botón + del Workbench y
+verifica el título, proyecto, propietario, usuario y contador.
 
-El proceso mostrará una dirección HTTPS local. El navegador puede mostrar una advertencia relacionada con el certificado de desarrollo.
+**Resultado esperado.** El Web Part se carga desde el servidor local y
+el contador aumenta al pulsar Incrementar.
 
-Acepta el certificado únicamente en el ambiente de laboratorio.
+Nota de vigencia. El SharePoint Online Workbench está deprecated desde
+mayo de 2026 y tiene retiro previsto para el 1 de diciembre de 2026.
+Durante este módulo se utiliza porque sigue disponible en el entorno de
+prueba; para nuevos escenarios de depuración, Microsoft recomienda el
+SPFx Debug Toolbar.
 
-### Paso 3. Probar el componente
+## ACTIVIDAD 12 --- Inicializar Git y crear una rama de trabajo
 
-Comprueba:
+**Objetivo.** Registrar el proyecto inicial y separar el trabajo del
+laboratorio mediante una rama.
 
-¡Hola SPFx con React!
+Configurar la identidad de Git.
 
-y el contador.
+**PowerShell 7**
 
-Hello SPFx
+``` powershell
+git config --global user.name "Nombre Apellido"
+git config --global user.email "correo@ejemplo.com"
+git config --get user.name
+git config --get user.email
+```
 
-Has hecho clic 0 veces.
+Inicializar el repositorio y registrar el estado inicial.
 
-[Incrementar]
+**PowerShell 7**
 
-Registra si la página local muestra el texto inicial y si el contador responde al botón. Corrige cualquier problema antes de continuar.
-
-## ACTIVIDAD 10
-
-Control de versiones con Git
-
-La rama de trabajo separa los cambios del desarrollo principal y permite identificar qué modificación pertenece a esta funcionalidad.
-
-Registrar el estado del proyecto mediante Git y crear una rama para trabajar de forma aislada.
-
-Git permite mantener historial, ramas y colaboración, elementos fundamentales para un proyecto SPFx profesional.
-
-### Paso 1. Inicializar Git
-
-Desde la raíz:
-
-```powershell
+``` powershell
+Set-Location C:\SPFx\spfx-lab2-webpart-XXX
 git init
-```
-
-### Paso 2. Revisar archivos
-
-```powershell
 git status
-```
-
-### Paso 3. Agregar archivos
-
-```powershell
 git add .
-```
-
-### Paso 4. Crear primer commit
-
-```powershell
 git commit -m "chore: crear proyecto SPFx inicial"
 ```
 
-### Paso 5. Crear rama
+Crear la rama de trabajo.
 
-```powershell
+**PowerShell 7**
+
+``` powershell
 git checkout -b feature/hello-spfx
+git branch --show-current
 ```
 
-La rama feature/hello-spfx permite trabajar en la funcionalidad del Web Part sin modificar directamente la rama principal.
+**Resultado esperado.** La rama activa es feature/hello-spfx y el
+repositorio contiene el commit inicial.
 
-Al terminar, `git log --oneline` debe mostrar el commit inicial y la rama activa debe ser `feature/hello-spfx`.
+## ACTIVIDAD 13 --- Modificar el Web Part y registrar el cambio
 
-## ACTIVIDAD 11
+**Objetivo.** Realizar una modificación visible y registrar el nuevo
+estado mediante un segundo commit.
 
-El segundo commit permite comprobar que Git no solo almacena el estado inicial, sino también la evolución del proyecto.
+Modificar el encabezado.
 
-Modificar el Web Part y registrar el cambio como un nuevo commit de Git.
+Archivo:
+src`\webparts`{=tex}`\helloSpfxXXX`{=tex}`\components`{=tex}\`HelloSpfxXXX\`.tsx
 
-Realizar una modificación y versionarla
+**Antes:**
 
-Modifica el mensaje:
+``` powershell
+<h2>¡Hola SPFx con React!</h2>
+```
 
-¡Hola SPFx con React!
+**Después:**
 
-por:
+``` powershell
+<h2>Laboratorio 2 — SPFx + React</h2>
+```
 
-Laboratorio 2 — SPFx + React
+Registrar el cambio.
 
-Después:
+**PowerShell 7**
 
-```powershell
+``` powershell
+Set-Location C:\SPFx\spfx-lab2-webpart-XXX
 git status
-```
-
-```powershell
 git add .
-```
-
-```powershell
 git commit -m "feat: actualizar mensaje del Web Part"
+git log --oneline -2
 ```
 
-Ahora el repositorio conserva dos estados del proyecto mediante commits independientes:
+**Resultado esperado.** El historial muestra el commit inicial y el
+commit de actualización.
 
-- commit 1
-- Proyecto inicial
-- commit 2
-- Web Part actualizado
-Comprueba con `git log --oneline` que ahora existen dos commits y que el segundo corresponde a la modificación realizada.
+## ACTIVIDAD 14 --- Generar el paquete de producción
 
-## ACTIVIDAD 12
+**Objetivo.** Construir y empaquetar la solución para que el instructor
+pueda publicarla en el App Catalog.
 
-Preparar el paquete SPFx
+**PowerShell 7**
 
-El archivo .sppkg es el artefacto que cruza la frontera entre el desarrollo local y la instalación de la solución en SharePoint.
-
-Generar el paquete de producción que SharePoint utilizará para instalar la solución SPFx.
-
-### Paso 1. Build de producción
-
-Ejecuta:
-
-```powershell
+``` powershell
+Set-Location C:\SPFx\spfx-lab2-webpart-XXX
 heft build --production
-```
-
-### Paso 2. Crear el paquete
-
-Ejecuta:
-
-```powershell
 heft package-solution --production
+Get-ChildItem .\sharepoint\solution\*.sppkg | Select-Object Name,Length,LastWriteTime
 ```
 
-### Paso 3. Localizar el archivo
+**Resultado esperado.** El build de producción termina sin errores y
+sharepoint`\solution `{=tex}contiene un archivo .sppkg.
 
-Busca:
+## ACTIVIDAD 15 --- Publicar e instalar la solución en el tenant compartido
 
-sharepoint/solution/
+**Objetivo.** Entregar el paquete al instructor, publicarlo en el App
+Catalog compartido e instalarlo únicamente en el sitio asignado.
 
-Debe existir un archivo:
+Confirmar el paquete.
 
-*.sppkg
+**Ruta**
 
-El archivo .sppkg es el resultado empaquetado de la solución y es el archivo que se carga en el App Catalog para su instalación en SharePoint.
+``` powershell
+C:\SPFx\spfx-lab2-webpart-XXX\sharepoint\solution\*.sppkg
+```
 
-- Código fuente
-- Build
-- Package
-- .sppkg
-- SharePoint
-Comprueba que el archivo `.sppkg` tenga una fecha y hora coherentes con la ejecución que acabas de realizar. Ese es el archivo que utilizarás en la Actividad 13.
+Identifica el archivo `.sppkg` generado en la actividad anterior. No lo
+cargues directamente al App Catalog.
 
-## ACTIVIDAD 13
+Entregar el paquete al instructor.
 
-La solución se despliega en dos etapas: primero se publica el paquete `.sppkg` en el App Catalog; después se agrega el Web Part a una página del sitio de laboratorio. El paquete que se cargará debe ser el generado en la Actividad 12.
+Entrega el archivo `.sppkg` al instructor. El instructor realizará la
+carga y publicación en el App Catalog compartido.
 
-### Paso 1. Confirmar el paquete que se va a publicar
+Esperar la publicación.
 
-En el proyecto local, abre:
+El instructor publicará la solución identificada como
+`spfx-lab2-webpart-XXX`. No selecciones ni solicites una opción que
+habilite la solución para todos los sitios de la organización.
 
-sharepoint/solution/
+Agregar la aplicación al sitio asignado.
 
-Localiza el archivo `.sppkg` generado por `heft package-solution --production`. Utiliza ese archivo; no cargues archivos `.ts`, `.tsx` ni archivos de configuración del proyecto.
+En el sitio asignado, abre Configuración \> Agregar una aplicación.
+Selecciona De su organización, localiza la solución
+`spfx-lab2-webpart-XXX` y agrégala al sitio.
 
-### Paso 2. Abrir el App Catalog
+Agregar el Web Part a una página.
 
-### Paso 3. Cargar el paquete
+Edita una página moderna, selecciona +, agrega un Web Part y busca
+`HelloSpfxXXX`.
 
-En la biblioteca de aplicaciones del App Catalog, selecciona la opción para agregar o cargar una aplicación y selecciona el archivo `.sppkg` localizado en el Paso 1.
+Validar.
 
-Cuando SharePoint muestre la solicitud de implementación, confirma la implementación y espera a que finalice antes de continuar.
+Publica o guarda la página y comprueba el texto modificado y el
+contador.
 
-### Paso 4. Abrir el sitio de laboratorio
+**Resultado esperado.** HelloSpfxXXX está disponible en el sitio
+asignado, muestra el mensaje Laboratorio 2 --- SPFx + React y el
+contador funciona.
 
-https://<tenant>.sharepoint.com/sites/SPFx-LabSite
+## ACTIVIDAD 16 --- Comprobación final
 
-### Paso 5. Editar una página
+**Objetivo.** Verificar que el ciclo completo del módulo se completó de
+forma reproducible.
 
-Abre una página moderna que puedas modificar y selecciona Editar.
+☐ Node.js 22.23.2 y npm disponibles.
 
-En una sección disponible, selecciona `+` para agregar contenido y elige la opción para agregar un Web Part.
+☐ PowerShell 7.4 o posterior disponible.
 
-### Paso 6. Buscar HelloSpfx
+☐ Git y Visual Studio Code disponibles.
 
-En el selector de Web Parts, busca `HelloSpfx` y selecciona el Web Part que corresponde a la solución publicada.
+☐ PnP.PowerShell instalado y verificable.
 
-Si `HelloSpfx` no aparece, comprueba primero que el paquete correcto haya sido cargado e implementado en el App Catalog y que estás trabajando en el sitio indicado por el laboratorio.
+☐ CLI for Microsoft 365 instalado y verificable.
 
-### Paso 7. Agregar y publicar la página
+☐ Generator SharePoint 1.23.2 instalado.
 
-Comprueba que el Web Part aparezca dentro de la sección. Guarda o publica la página según las opciones disponibles.
+☐ Heft disponible globalmente.
 
-### Paso 8. Validar el despliegue
+☐ Proyecto creado como `spfx-lab2-webpart-XXX`.
 
-Comprueba que el Web Part se muestre correctamente y que el contador de la Actividad 6 funcione al seleccionar `Incrementar`. Esto confirma el funcionamiento de la solución desplegada en SharePoint.
+☐ Web Part creado como `HelloSpfxXXX`.
 
-## ACTIVIDAD 14
+☐ `skipFeatureDeployment` configurado como false.
 
-La validación final reúne las comprobaciones realizadas durante el laboratorio y confirma que el flujo completo puede repetirse.
+☐ `config/rig.json` identificado; no se creó `config/heft.json` para
+este laboratorio.
 
-Comprobar que el ambiente, el desarrollo, el versionamiento y el despliegue completaron correctamente el ciclo del laboratorio.
+☐ TypeScript utilizado con una interfaz tipada.
 
-**Validación final**
+☐ React.useState funcionando.
 
-Realiza las siguientes comprobaciones:
+☐ heft build exitoso.
 
-Ambiente
+☐ heft trust-dev-cert ejecutado.
 
-- [ ] Node.js 22.x
-- [ ] npm
-- [ ] Git
-- [ ] VS Code
-Desarrollo
+☐ heft start ejecutado.
 
-- [ ] Proyecto SPFx creado
-- [ ] React funcionando
-- [ ] TypeScript funcionando
-- [ ] useState funcionando
-- [ ] Heft build exitoso
-- [ ] heft start exitoso
-Versionamiento
+☐ `SPFX_SERVE_TENANT_DOMAIN` configurada sin https://.
 
-- [ ] Git inicializado
-- [ ] Commit inicial
-- [ ] Rama feature
-- [ ] Segundo commit
-Despliegue
+☐ Web Part ejecutado en el entorno local.
 
-- [ ] Build producción
-- [ ] .sppkg generado
-- [ ] App Catalog
-- [ ] Web Part instalado
-- [ ] Web Part visible en SharePoint
-Comprobación final: reconstruye por escrito el recorrido desde el proyecto local hasta el Web Part visible en SharePoint e identifica el artefacto o herramienta utilizado en cada etapa.
+☐ Repositorio Git inicializado.
 
-## 5. Cierre del laboratorio
+☐ Rama `feature/hello-spfx` creada.
 
-El laboratorio concluye cuando el Web Part puede compilarse, ejecutarse localmente, versionarse mediante Git, empaquetarse como .sppkg y utilizarse dentro de una página de SharePoint.
+☐ Commit inicial realizado.
 
-## 6. Resultado de aprendizaje del Módulo 2
+☐ Segundo commit realizado.
 
-Al finalizar el laboratorio, podrás explicar y ejecutar el recorrido que lleva desde un proyecto SPFx en el ambiente local hasta un Web Part disponible en SharePoint. El recorrido incluye la preparación del entorno, el desarrollo con TypeScript y React, la compilación con Heft, el control de versiones con Git, la generación del paquete .sppkg, su publicación en el App Catalog y la validación del Web Part en una página de SharePoint.
+☐ Build de producción exitoso.
+
+☐ Archivo `.sppkg` generado.
+
+☐ Paquete publicado en el App Catalog por el instructor.
+
+☐ Aplicación agregada al sitio asignado.
+
+☐ `HelloSpfxXXX` visible y funcional en SharePoint Online.
