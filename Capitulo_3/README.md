@@ -1,2109 +1,1338 @@
-# Laboratorio 3
+# Laboratorio 3 --- Panel de proyectos con SPFx, React, Fluent UI y APIs
 
-Panel de proyectos con SPFx, React, Fluent UI y APIs
+**Duración estimada:** 180 minutos
 
-Duración: 90 minutos
+Duración estimada: 180 minutos
 
-## 1. Objetivo general
+## Objetivo
 
-Construir un Client-Side Web Part SPFx llamado ProjectDashboard que permita:
+Construir un Client-Side Web Part SPFx denominado `ProjectDashboardXXX`
+que utilice React y TypeScript para presentar proyectos de una lista de
+SharePoint, mostrar información del usuario autenticado mediante
+`Microsoft Graph` y proporcionar un formulario con controles de Fluent
+UI. Durante el desarrollo se aplicarán `useState`, `useEffect`,
+`useRef`, un hook personalizado, inputs controlados, validación,
+separación de responsabilidades y prácticas básicas de seguridad y
+rendimiento.
 
-Trabajar en un Site Collection de prueba.
+## Alcance
 
-Publicar una solución mediante el App Catalog.
+El laboratorio cubre desde la preparación del Site Collection y la lista
+de datos hasta la compilación, generación del paquete .sppkg,
+publicación en el App Catalog, aprobación del permiso `User.Read` y
+validación del Web Part en una página moderna de SharePoint Online. El
+laboratorio utiliza la ruta estable de creación de proyectos SPFx
+mediante Yeoman y el generador de SharePoint.
 
-Crear un Web Part con React y TypeScript.
+## Requisitos
 
-Utilizar useState, useEffect y useRef.
+Cuenta de Microsoft 365 con acceso a un tenant de laboratorio de
+SharePoint Online.
 
-Crear y utilizar un hook personalizado.
+Acceso al sitio `` Portal-`Proyectos`XXX `` con permisos para editar
+páginas y crear listas. El App Catalog compartido y la aprobación de
+permisos de API son administrados por el instructor o el administrador
+del tenant.
 
-Utilizar componentes de Fluent UI.
+Node.js 22.23.2 instalado y disponible en PowerShell.
 
-Implementar inputs controlados.
+Git instalado.
 
-Comprender la relación entre ciclo de vida clásico de React y hooks.
+Visual Studio Code instalado.
 
-Consultar información de SharePoint mediante REST.
+PowerShell 7 para las tareas de PnP PowerShell, si se utiliza esa
+herramienta en el entorno del curso.
 
-Consultar información del usuario mediante Microsoft Graph.
+SPFx 1.23.2 y React 17.0.1 para el proyecto de este laboratorio.
 
-Manejar los permisos requeridos por Microsoft Graph.
+Conexión a Internet para descargar dependencias y acceder a Microsoft
+365.
 
-Aplicar validación de entradas.
+## Antes de comenzar
 
-Aplicar buenas prácticas básicas de rendimiento.
+Este laboratorio utiliza SPFx 1.23.2. Para mantener un procedimiento
+reproducible, se utilizará explícitamente el generador
+@microsoft/generator-sharepoint 1.23.2 y la opción SharePoint Online
+only (latest) del asistente. El App Catalog es compartido y su
+administración corresponde al instructor. Cada participante trabajará en
+su sitio `` Portal-`Proyectos`XXX `` y utilizará nombres únicos para la
+solución y el Web Part. No se utilizará el CLI de SPFx en este
+laboratorio.
 
-Generar el paquete .sppkg.
+## Actividad 1. Preparar el App Catalog y el sitio de laboratorio
 
-Desplegar y validar la solución en SharePoint Online.
+Preparar el destino de publicación y el sitio de SharePoint donde se
+probará el Web Part.
 
-Al finalizar, el Web Part mostrará un panel de proyectos con información del usuario, un formulario para agregar proyectos y la lista de proyectos obtenida desde SharePoint.
+### Paso 1. Confirmar el App Catalog compartido
 
-PANEL DE PROYECTOS
-
-Usuario: <nombre del usuario autenticado>
-
-Nuevo proyecto
-
-Nombre del proyecto Agregar
-
-Proyectos
-
-- Portal SPFx
-- Dashboard Viva
-- Centro Documental
-Contador: 3
-
-## 2. Contexto del laboratorio
-
-En los módulos anteriores el participante preparó el ambiente y conoció SPFx. En este módulo se da el siguiente paso: construir una solución que realmente interactúe con SharePoint y Microsoft 365.
-
-Un Client-Side Web Part se ejecuta en el navegador, se distribuye como parte de un paquete .sppkg y puede consumir Microsoft Graph, REST de SharePoint u otras fuentes.
-
-La solución se ejecutará en una página moderna de SharePoint. El Web Part ProjectDashboard utilizará React para la interfaz, useState, useEffect y useRef para el estado y el ciclo de vida, un hook personalizado para encapsular la lógica de proyectos, SharePoint REST para consultar listas y Microsoft Graph para obtener información del usuario. El resultado se distribuirá mediante un paquete .sppkg publicado en el App Catalog.
-
-SHAREPOINT ONLINE
-
-Site Collection App Catalog
-
-de prueba
-
-.sppkg
-
-Página moderna
-
-ProjectDashboard
-
-React
-
-useState useEffect useRef
-
-Hook personalizado
-
-SharePoint REST Microsoft Graph
-
-Listas Usuario actual
-
-3. Temas del Módulo 3 cubiertos
-
-El objetivo final del laboratorio coincide con el planteamiento del documento: un Web Part que consuma Graph y REST, utilice hooks, un hook personalizado, Fluent UI, inputs controlados y buenas prácticas de seguridad y rendimiento.
-
-## 4. Arquitectura de actividades
-
-## ACTIVIDAD 1
-
-Preparar App Catalog + Site
-
-## ACTIVIDAD 2
-
-Preparar ambiente SPFx
-
-## ACTIVIDAD 3
-
-Crear ProjectDashboard
-
-## ACTIVIDAD 4
-
-Crear el Client-Side Web Part ProjectDashboard con React y TypeScript.
-
-### Paso 1. Crear la carpeta de trabajo
-
-```powershell
-mkdir C:\SPFx\Lab3
-```
-
-```powershell
-cd C:\SPFx\Lab3
-```
-
-### Paso 2. Crear el proyecto
-
-Ejecuta:
-
-```powershell
-yo @microsoft/sharepoint
-```
-
-Selecciona:
-
-Solution name: spfx-lab3
-
-Which type of client-side component: WebPart
-
-What is your Web part name?: ProjectDashboard
-
-Which template would you like to use?: React
-
-Mantén las demás opciones con los valores predeterminados del laboratorio.
-
-### Paso 3. Abrir el proyecto en VS Code
-
-```powershell
-cd spfx-lab3
-```
-
-```powershell
-code .
-```
-
-### Paso 4. Identificar la estructura
-
-Localiza src/, config/ y sharepoint/. Dentro de src/webparts/projectDashboard/ identifica ProjectDashboardWebPart.ts, components/ProjectDashboard.tsx y ProjectDashboard.module.scss.
-
-La separación permite distinguir la lógica TypeScript del Web Part, la interfaz React y los estilos.
-
-## ACTIVIDAD 5
-
-Instalar las dependencias del proyecto y comprobar que React y Fluent UI están disponibles.
-
-### Paso 1. Instalar dependencias
-
-Desde la raíz del proyecto:
-
-```powershell
-npm install
-```
-
-### Paso 2. Verificar Fluent UI
-
-Si el proyecto no contiene @fluentui/react, instala la versión compatible con la solución:
-
-```powershell
-npm install @fluentui/react
-```
-
-No instales versiones arbitrarias de React. Para SPFx 1.23.2, utiliza React 17.0.1.
-
-## ACTIVIDAD 6
-
-Probar el Web Part localmente antes de desplegarlo en SharePoint.
-
-### Paso 1. Iniciar el entorno de desarrollo
-
-Desde la raíz del proyecto ejecuta:
-
-```powershell
-heft start
-```
-
-### Paso 2. Abrir la dirección local
-
-Abre la dirección HTTPS local que indique el proceso. El navegador puede mostrar una advertencia sobre el certificado de desarrollo; acéptala únicamente en el ambiente de laboratorio.
-
-### Paso 3. Comprobar el Web Part
-
-Verifica que ProjectDashboard pueda cargarse en el entorno local.
-
-## ACTIVIDAD 7
-
-Input controlado
-
-## ACTIVIDAD 8
-
-REST de SharePoint
-
-## ACTIVIDAD 9
-
-Microsoft Graph
-
-## ACTIVIDAD 10
-
-Ciclo de vida
-
-## ACTIVIDAD 11
-
-Seguridad + rendimiento
-
-## ACTIVIDAD 12
-
-Empaquetar y desplegar
-
-ProjectDashboard funcionando
-
-## ACTIVIDAD 1 — Preparar App Catalog y Site Collection
-
-Incorporar componentes de Fluent UI para construir una interfaz coherente con Microsoft 365.
-
-Preparar el lugar donde se instalará y probará la solución.
-
-El App Catalog funciona como repositorio central de los paquetes .sppkg, mientras que el Site Collection de prueba proporciona un espacio aislado para validar Web Parts sin afectar sitios productivos.
-
-### Paso 1. Acceder al centro de administración
-
-Inicia sesión con una cuenta que tenga permisos administrativos.
-
-Abre:
-
-Microsoft 365 Admin Center SharePoint Admin Center
+Inicia sesión en Microsoft 365 con una cuenta que tenga permisos
+administrativos. Abre el Centro de administración de SharePoint. En la
+interfaz en español, selecciona Centros de administración \> SharePoint.
 
 ### Paso 2. Verificar el App Catalog
 
-En el SharePoint Admin Center:
+El instructor administra el App Catalog compartido del tenant. No crees
+un App Catalog nuevo ni modifiques su configuración. Confirma con el
+instructor que el catálogo está disponible y que se utilizará para
+publicar el paquete `.sppkg` del laboratorio.
 
-Más características Aplicaciones App Catalog
+**Resultado esperado.** El instructor confirma que el App Catalog
+compartido está disponible y que la biblioteca `Apps for SharePoint`
+será el destino de publicación.
 
-Si no existe, créalo.
+### Paso 3. Crear el sitio del participante
 
-Utiliza, por ejemplo:
+El instructor o el administrador del tenant crea un sitio de
+comunicación para tu práctica con el nombre exacto
+`` Portal-`Proyectos`XXX ``, donde `XXX` representa tus iniciales. Si el
+sitio ya fue creado, utilízalo y no crees otro.
 
-Nombre:
+### Paso 4. Confirmar permisos en el sitio
 
-App Catalog - Laboratorio SPFx
+Abre `` Portal-`Proyectos`XXX ``. Tu cuenta debe poder editar páginas y
+crear listas en ese sitio. Si no tienes esos permisos, solicita al
+instructor o al administrador del sitio que te los asigne antes de
+continuar.
 
-y una URL apropiada para el tenant.
+### Paso 5. Crear la página de prueba
 
-### Paso 3. Verificar la biblioteca
+Dentro de `` Portal-`Proyectos`XXX ``, selecciona Nuevo \> Página.
+Asigna el título `Panel de proyectos` y publica la página. No agregues
+todavía el Web Part.
 
-Dentro del App Catalog localiza:
+**Resultado esperado.** Existe un App Catalog disponible y existe el
+sitio `Portal-ProyectosXXX` con una página publicada llamada
+`Panel de proyectos`.
 
-Apps for SharePoint
+## Actividad 2. Crear la lista de proyectos
 
-Esta biblioteca será el destino del archivo:
+Crear la fuente de datos que el Web Part consultará mediante SharePoint
+REST.
 
-projectdashboard.sppkg
+### Paso 1. Crear la lista
 
-### Paso 4. Crear el Site Collection
+En `` Portal-`Proyectos`XXX ``, selecciona Nuevo \> Lista \> Lista en
+blanco. Escribe `Proyectos` como nombre y selecciona Crear.
 
-En:
+### Paso 2. Crear la columna Owner
 
-SharePoint Admin Center Sitios activos Crear
+Abre la lista `Proyectos`. Selecciona + Agregar columna \> Una línea de
+texto. Escribe `Owner` como nombre de columna y guarda.
 
-Selecciona:
+### Paso 3. Crear la columna Status
 
-Sitio de comunicación
+Selecciona + Agregar columna \> Elección. Escribe `Status` como nombre.
+Agrega exactamente estas opciones: `Activo`, `En pausa`, `Finalizado`.
+Guarda la columna.
 
-Utiliza:
+### Paso 4. Crear la columna Description
 
-Nombre:
+Selecciona + Agregar columna \> Varias líneas de texto. Escribe
+`Description` como nombre y guarda.
 
-SPFx Lab 3
+### Paso 5. Agregar registros
 
-### Paso 5. Configurar permisos
+Agrega tres elementos con estos valores:
 
-Asigna:
+  -----------------------------------------------------------------------
+  Title             Owner             Status            Description
+  ----------------- ----------------- ----------------- -----------------
+  Portal SPFx       Miguel            Activo            Portal para
+                                                        soluciones SPFx
 
-```powershell
-Owner:
-```
+  Dashboard Viva    Ana               Activo            Panel para
+                                                        información de
+                                                        Microsoft 365
 
-Member:
+  Centro Documental Carlos            En pausa          Gestión
+                                                        documental
+  -----------------------------------------------------------------------
 
-Alumno
+**Resultado esperado.** La lista `Proyectos` contiene tres registros y
+las columnas `Title`, `Owner`, `Status` y `Description`.
 
-El laboratorio requiere que el participante pueda:
+## Actividad 3. Verificar el ambiente de desarrollo
 
-modificar páginas;
+Comprobar las versiones que utilizará el proyecto antes de crear la
+solución.
 
-insertar Web Parts;
+### Paso 1. Abrir PowerShell
 
-crear o consultar listas;
+Abre PowerShell 7. No utilices el símbolo del sistema clásico para las
+instrucciones que indiquen PowerShell.
 
-probar la solución.
+**Comandos de verificación**
 
-### Paso 6. Crear una página
+  -----------------------------------------------------------------------
+  node --version`<br>`{=html}npm --version`<br>`{=html}where.exe
+  node`<br>`{=html}where.exe npm`<br>`{=html}git
+  --version`<br>`{=html}code --version`<br>`{=html}yo
+  --version`<br>`{=html}npm list -g @microsoft/generator-sharepoint
+  --depth=0`<br>`{=html}npm list -g @rushstack/heft --depth=0
+  -----------------------------------------------------------------------
 
-Dentro de:
+  -----------------------------------------------------------------------
 
-SPFx Lab 3
+**Resultado esperado.** `node --version` muestra `v22.23.2` y
+`npm --version` muestra `10.9.8`. Git y VS Code responden con una
+versión instalada. Si Node.js no muestra `v22.23.2`, detén el
+laboratorio y corrige la versión antes de crear el proyecto.
 
-selecciona:
+El bloque anterior verifica también que el generador sea exactamente
+`@microsoft/generator-sharepoint@1.23.2` y que Heft sea `1.2.25`.
 
-Nuevo Página
+### Paso 2. Confirmar las versiones globales
 
-Crea:
+Revisa las dos últimas líneas del bloque anterior para confirmar el
+generador y Heft.
 
-Panel de proyectos
+**Resultado esperado.** Yeoman responde con su versión instalada y las
+consultas `npm list -g` identifican
+`@microsoft/generator-sharepoint@1.23.2` y `@rushstack/heft@1.2.25`.
 
-Todavía no agregaremos nuestro Web Part.
+## Actividad 4. Crear el proyecto SPFx
 
-Debe existir:
+Crear el Web Part `ProjectDashboardXXX` con React y TypeScript
+utilizando el generador estable.
 
-Tenant
+### Paso 1. Crear la carpeta del proyecto
 
-App Catalog
+**Ejecuta:**
 
-Apps for SharePoint
+  -----------------------------------------------------------------------
+  New-Item -ItemType Directory -Path
+  C:`\SPFx`{=tex}`\spfx`{=tex}-lab3-webpart-XXX
+  -Force`<br>`{=html}Set-Location
+  C:`\SPFx`{=tex}`\spfx`{=tex}-lab3-webpart-XXX
+  -----------------------------------------------------------------------
 
-SPFx Lab 3
+  -----------------------------------------------------------------------
 
-Panel de proyectos
+### Paso 2. Ejecutar el generador
 
-## ACTIVIDAD 2 — Crear la lista de proyectos
+**Ejecuta:**
 
-Crear la fuente de datos que posteriormente consumirá el Web Part mediante REST.
+  yo @microsoft/sharepoint
+  --------------------------
 
-### Paso 1. Crear una lista
+### Paso 3. Responder el asistente
 
-En el sitio:
+Responde el asistente con estos valores. En SPFx 1.23.2 no se muestra la
+antigua pregunta interactiva sobre despliegue tenant-wide; esa
+configuración se controlará explícitamente en
+`config/`package-solution.json\`\` en el siguiente paso.
 
-Nuevo Lista Lista en blanco
+Solution name: `spfx-lab3-webpart-XXX`
 
-Nombre:
+Which baseline packages do you want to target for your component(s)?:
+`SharePoint Online only (latest)`
 
-Proyectos
+Where do you want to place the files?: `Use the current folder`
 
-### Paso 2. Agregar columnas
+Which type of client-side component to create?: `WebPart`
 
-Crea:
+What is your Web part name?: `ProjectDashboardXXX`
 
-Para Status, utiliza:
+Which template would you like to use?: `React`
 
-Activo
+En SPFx 1.23.2, después de seleccionar `React` no se requieren
+respuestas adicionales en este laboratorio. No modifiques manualmente el
+proyecto antes de completar el paso siguiente.
 
-En pausa
+### Paso 4. Configurar el despliegue para el tenant compartido
 
-Finalizado
+Abre
+`config/`package-solution.json`` . Dentro de la propiedad `solution`, agrega o verifica la propiedad ``skipFeatureDeployment\``con el valor`false\`.
 
-### Paso 3. Agregar registros
+  "skipFeatureDeployment": false
+  --------------------------------
 
-Introduce:
+**Resultado esperado.** La carpeta `C:\SPFx\spfx-lab3-webpart-XXX`
+contiene el proyecto y `package.json`. El archivo
+`config/package-solution.json` conserva `skipFeatureDeployment` con
+valor `false`.
 
-Nuestro Web Part necesitará datos reales.
+## Actividad 5. Instalar dependencias y preparar el certificado de desarrollo
 
-La arquitectura será:
+Instalar las dependencias locales del proyecto y confiar en el
+certificado HTTPS utilizado por el entorno de desarrollo.
 
-Lista Proyectos
+### Paso 1. Abrir el proyecto
 
-SharePoint REST
+Desde `C:\SPFx\`spfx-lab3-webpart-XXX\`\`, ejecuta:
 
-SPHttpClient
+  code .
+  --------
 
-React
+### Paso 2. Instalar dependencias
 
-ProjectDashboard
+En la terminal integrada de VS Code, ubicada en la raíz del proyecto,
+ejecuta:
 
-## ACTIVIDAD 3 — Preparar el ambiente de desarrollo
+  npm install
+  -------------
 
-### Paso 1. Verificar Node.js
+### Paso 3. Verificar React y Fluent UI
 
-En PowerShell:
+**Ejecuta:**
 
-```powershell
-node --version
-```
+  npm list react react-dom @fluentui/react --depth=0
+  ----------------------------------------------------
 
-Debe utilizarse:
+**Resultado esperado.** React aparece como `17.0.1`. Si
+`@fluentui/react` no aparece, instala la dependencia con el siguiente
+comando y vuelve a ejecutar la verificación.
 
-Node.js 22 LTS
+  npm install @fluentui/react
+  -----------------------------
 
-Para SPFx 1.23.2, la matriz de compatibilidad indica Node.js 22 y React 17.0.1.
+### Paso 4. Confiar en el certificado de desarrollo
 
-### Paso 2. Verificar npm
+Desde la raíz del proyecto ejecuta:
 
-```powershell
-npm --version
-```
+  heft trust-dev-cert
+  ---------------------
 
-### Paso 3. Verificar VS Code
+**Resultado esperado.** Heft completa el proceso de confianza del
+certificado de desarrollo. Esta operación se realiza una vez por
+estación de trabajo.
 
-```powershell
-code --version
-```
+## Actividad 6. Reconocer la estructura del proyecto
 
-### Paso 4. Verificar Git
+Identificar los archivos que contienen la configuración, la lógica del
+Web Part, el componente React y los estilos.
 
-```powershell
-git --version
-```
+### Paso 1. Abrir el Explorador de VS Code
 
-### Paso 5. Instalar el CLI indicado por el módulo
+En el Explorador de archivos de VS Code, expande la carpeta del
+proyecto.
 
-```powershell
-npm install @microsoft/spfx-cli --global
-```
+### Paso 2. Identificar las carpetas
 
-Después:
+Localiza exactamente estas carpetas: `src`, `config` y `sharepoint`. Si
+`sharepoint` todavía no aparece, no la crees manualmente; aparecerá
+cuando el proceso de empaquetado genere la salida de la solución.
 
-```powershell
-spfx --help
-```
+### Paso 3. Identificar los archivos del Web Part
 
-El comando de creación planteado por el material es:
+Dentro de `src/webparts/projectDashboardXXX/`, localiza
+`` ProjectDashboardXXX`WebPart.ts`. Dentro de `components/`, localiza ``ProjectDashboardXXX`.tsx`
+y \``ProjectDashboardXXX`.module.scss\`.
 
-```powershell
-spfx create --template webpart-react --library-name spfx-lab --component-name ProjectDashboard
-```
+### Paso 4. Identificar la configuración
 
-Microsoft documenta actualmente @microsoft/spfx-cli como el CLI moderno que sustituye al generador Yeoman, pero la documentación todavía lo marca como pre-release. Para producción, Microsoft continúa recomendando el entorno estable correspondiente a la versión de SPFx.
+En la raíz localiza `package.json` y `tsconfig.json`. En `config`,
+localiza `rig.json`, `package-solution.json` y `serve.json`.
 
-Por ello, para un laboratorio didáctico pueden mantenerse dos rutas:
+**Resultado esperado.** Puedes distinguir el código del Web Part, el
+componente React, los estilos, las dependencias y los archivos de
+configuración. No se asume que `sharepoint/solution` exista antes del
+empaquetado.
 
-Ruta A — seguir exactamente el Módulo 3:
+## Actividad 7. Ejecutar el Web Part en SharePoint
 
-```powershell
-npm install @microsoft/spfx-cli --global
-```
+Comprobar que el proyecto generado puede ejecutarse antes de modificar
+el código.
 
-Ruta B — ruta estable de SPFx 1.23.2:
+### Paso 1. Definir el sitio utilizado por el Hosted Workbench
 
-```powershell
-npm install -g yo @microsoft/generator-sharepoint
-```
+En PowerShell, desde la raíz del proyecto, asigna el dominio y la ruta
+del sitio de laboratorio a la variable utilizada por SPFx. No incluyas
+`https://` porque `serve.json` ya contiene el protocolo.
 
-y:
+  -----------------------------------------------------------------------
+  \$env:SPFX_SERVE_TENANT_DOMAIN =
+  "`<tenant>`{=html}.sharepoint.com/sites/Portal-ProyectosXXX"
+  -----------------------------------------------------------------------
 
-```powershell
-yo @microsoft/sharepoint
-```
+  -----------------------------------------------------------------------
 
-La documentación oficial de Microsoft continúa mostrando este mecanismo para crear proyectos SPFx estables.
+### Paso 2. Iniciar Heft
 
-## ACTIVIDAD 4 — Crear el Client-Side Web Part
+**Ejecuta:**
 
-### Paso 1. Crear carpeta
+  heft start
+  ------------
 
-```powershell
-mkdir C:\SPFx\Lab3
-```
+### Paso 3. Abrir el Hosted Workbench
 
-```powershell
-cd C:\SPFx\Lab3
-```
+Heft iniciará el servidor de desarrollo y mostrará la dirección del
+entorno de prueba. Abre la dirección indicada por la salida del comando.
+El Hosted Workbench de SharePoint Online está en transición: Microsoft
+lo marcó como obsoleto desde mayo de 2026 y anunció su retiro para el 1
+de diciembre de 2026. Mientras el entorno del curso continúe
+disponiéndolo, este paso permite probar el proyecto con el contexto de
+SharePoint. Si el tenant ya utiliza el Debug Toolbar, sigue el mecanismo
+indicado por el instructor.
 
-### Paso 2. Crear el proyecto
+El Hosted Workbench de SharePoint Online está en transición: Microsoft
+lo marcó como obsoleto desde mayo de 2026 y anunció su retiro para el 1
+de diciembre de 2026. Mientras el entorno del curso continúe
+disponiéndolo, este paso permite probar el proyecto con el contexto de
+SharePoint. Para entornos que ya hayan migrado al Debug Toolbar, se debe
+utilizar ese mecanismo de depuración.
 
-```powershell
-spfx create --template webpart-react --library-name spfx-lab --component-name ProjectDashboard
-```
+**Resultado esperado.** El proyecto inicia sin errores y el Web Part
+`ProjectDashboardXXX` puede cargarse en el entorno de prueba.
 
-### Paso 3. Abrir VS Code
+## Actividad 8. Crear el modelo de proyecto en TypeScript
 
-```powershell
-cd spfx-lab
-```
+Definir un tipo explícito para los elementos que llegan desde
+SharePoint.
 
-```powershell
-code .
-```
+### Paso 1. Crear el archivo IProject.ts
 
-### Paso 4. Identificar la estructura
+En
+\``src/webparts/projectDashboardXXX/`components/`, crea un archivo llamado`IProject.ts\`.
 
-Localiza:
+**Archivo: src/webparts/projectDashboardXXX/components/IProject.ts**
 
-- src/
-webparts/
+  -----------------------------------------------------------------------
+  export interface IProject {`<br>`{=html} Id: number;`<br>`{=html}
+  Title: string;`<br>`{=html} Owner: string;`<br>`{=html} Status:
+  string;`<br>`{=html} Description: string;`<br>`{=html}}
+  -----------------------------------------------------------------------
 
-projectDashboard/
+  -----------------------------------------------------------------------
 
-ProjectDashboardWebPart.ts
+### Paso 2. Comprobar el tipado
 
-components/
+En el mismo archivo, no agregues propiedades distintas a las definidas.
+El tipo se utilizará para evitar que el componente React dependa de
+objetos sin estructura conocida.
 
-ProjectDashboard.tsx
+**Resultado esperado.** Existe `IProject.ts` con cinco propiedades
+tipadas.
 
-ProjectDashboard.module.scss
+## Actividad 9. Implementar useState
 
-- config/
-- sharepoint/
-lógica TypeScript;
+Agregar estado React para el contador y comprobar la actualización de la
+interfaz.
 
-vista React;
+### Paso 1. Reemplazar el componente React
 
-estilos SCSS.
+Abre el archivo indicado y reemplaza su contenido completo.
 
-Esta separación facilita:
+**Archivo:
+src/webparts/projectDashboardXXX/components/ProjectDashboardXXX.tsx**
 
-mantenimiento;
+  -----------------------------------------------------------------------
+  import \* as React from 'react';`<br>`{=html}`<br>`{=html}export
+  default function ProjectDashboardXXX(): React.ReactElement
+  {`<br>`{=html} const \[count, setCount\] =
+  React.useState`<number>`{=html}(0);`<br>`{=html}`<br>`{=html} return
+  (`<br>`{=html}
+  -----------------------------------------------------------------------
 
-reutilización;
+  -----------------------------------------------------------------------
 
-pruebas;
+### Paso 2. Guardar y observar el resultado
 
-identificación de errores;
+Guarda el archivo. Si `heft start` continúa ejecutándose, el navegador
+debe actualizar el Web Part. Pulsa `Incrementar` dos veces.
 
-crecimiento del proyecto.
+**Resultado esperado.** El contador cambia de 0 a 1 y después a 2 sin
+recargar la página.
 
-## ACTIVIDAD 5 — Instalar dependencias
+## Actividad 10. Implementar useEffect
 
-Desde la raíz:
+Ejecutar un efecto cada vez que cambie el contador.
 
-```powershell
-npm install
-```
+### Paso 1. Agregar useEffect
 
-Si Fluent UI no está disponible en el proyecto, instala la dependencia compatible definida por el proyecto:
+Reemplaza el archivo completo por:
 
-```powershell
-npm install @fluentui/react
-```
+**Archivo:
+src/webparts/projectDashboardXXX/components/ProjectDashboardXXX.tsx**
 
-No se deben instalar versiones arbitrarias de React.
+  -----------------------------------------------------------------------
+  import \* as React from 'react';`<br>`{=html}`<br>`{=html}export
+  default function ProjectDashboardXXX(): React.ReactElement
+  {`<br>`{=html} const \[count, setCount\] =
+  React.useState`<number>`{=html}(0);`<br>`{=html}`<br>`{=html}
+  React.useEffect(() =\> {`<br>`{=html}
+  console.log(`El contador cambió a ${count}`);`<br>`{=html} },
+  \[count\]);`<br>`{=html}`<br>`{=html} return (`<br>`{=html}
+  -----------------------------------------------------------------------
 
-Para SPFx 1.23.2 la matriz de compatibilidad establece:
+  -----------------------------------------------------------------------
 
-SPFx 1.23.2
+### Paso 2. Comprobar el efecto
 
-Node.js 22
+Abre las herramientas de desarrollador del navegador con F12. Selecciona
+Console. Pulsa `Incrementar` dos veces.
 
-React 17.0.1
+**Resultado esperado.** La consola muestra un mensaje para cada cambio
+del estado.
 
-## ACTIVIDAD 6 — Ejecutar el Web Part en Workbench
+## Actividad 11. Implementar useRef
 
-El Workbench permite probar el Web Part antes de desplegarlo.
+Utilizar una referencia para colocar el foco en un campo de texto sin
+usar el estado para almacenar la referencia.
 
-### Paso 1
+### Paso 1. Reemplazar el componente
 
-Ejecuta:
+Utiliza este contenido completo:
 
-```powershell
-npm install
-```
+**Archivo:
+src/webparts/projectDashboardXXX/components/ProjectDashboardXXX.tsx**
 
-### Paso 2
+  --------------------------------------------------------------------------
+  import \* as React from 'react';`<br>`{=html}`<br>`{=html}export default
+  function ProjectDashboardXXX(): React.ReactElement {`<br>`{=html} const
+  \[count, setCount\] = React.useState`<number>`{=html}(0);`<br>`{=html}
+  const inputRef =
+  React.useRef`<HTMLInputElement>`{=html}(null);`<br>`{=html}`<br>`{=html}
+  React.useEffect(() =\> {`<br>`{=html}
+  console.log(`El contador cambió a ${count}`);`<br>`{=html} },
+  \[count\]);`<br>`{=html}`<br>`{=html} const focusInput = (): void =\>
+  {`<br>`{=html} inputRef.current?.focus();`<br>`{=html}
+  };`<br>`{=html}`<br>`{=html} return (`<br>`{=html}
+  --------------------------------------------------------------------------
 
-Ejecuta el comando de ejecución indicado por el proyecto:
+  --------------------------------------------------------------------------
 
-```powershell
-npm run serve
-```
+**Resultado esperado.** Al seleccionar `Focalizar input`, el cursor se
+coloca en el campo de texto.
 
-```powershell
-https://localhost:4321/temp/workbench.html
-```
+## Actividad 12. Crear un hook personalizado
 
-### Paso 3
+Encapsular la lógica de estado para los proyectos en un hook
+reutilizable.
 
-Abre:
+### Paso 1. Crear useProjects.ts
 
-```powershell
-https://localhost:4321/temp/workbench.html
-```
+En `components/`, crea el archivo.
 
-Agrega:
+**Archivo: src/webparts/projectDashboardXXX/components/useProjects.ts**
 
-ProjectDashboard
+  -----------------------------------------------------------------------
+  import \* as React from 'react';`<br>`{=html}import { IProject } from
+  './IProject';`<br>`{=html}`<br>`{=html}export function useProjects():
+  {`<br>`{=html} projects: IProject\[\];`<br>`{=html} setProjects:
+  React.Dispatch\<React.SetStateAction\<IProject\[\]\>\>;`<br>`{=html}}
+  {`<br>`{=html} const \[projects, setProjects\] =
+  React.useState\<IProject\[\]\>(\[\]);`<br>`{=html}`<br>`{=html} return
+  {`<br>`{=html} projects,`<br>`{=html} setProjects`<br>`{=html}
+  };`<br>`{=html}}
+  -----------------------------------------------------------------------
 
-Todavía no necesitamos desplegar nada en SharePoint.
+  -----------------------------------------------------------------------
 
-Primero comprobamos:
+### Paso 2. Explicar la responsabilidad
 
-Código
+El hook mantiene el estado de la colección de proyectos. En una
+actividad posterior recibirá una función de carga para obtener datos
+desde SharePoint.
 
-Compilación
+**Resultado esperado.** `useProjects.ts` exporta `useProjects` y
+devuelve `projects` y `setProjects`.
 
-React
+## Actividad 13. Incorporar Fluent UI
 
-Renderizado
+Utilizar componentes de Fluent UI para construir el formulario.
 
-## ACTIVIDAD 7 — Crear el componente React
+### Paso 1. Reemplazar el componente
 
-Abre:
+Utiliza el siguiente contenido completo.
 
-src/webparts/projectDashboard/components/ProjectDashboard.tsx
+**Archivo:
+src/webparts/projectDashboardXXX/components/ProjectDashboardXXX.tsx**
 
-Utiliza inicialmente:
+  --------------------------------------------------------------------------
+  import \* as React from 'react';`<br>`{=html}import {`<br>`{=html}
+  PrimaryButton,`<br>`{=html} Stack,`<br>`{=html} TextField`<br>`{=html}}
+  from '@fluentui/react';`<br>`{=html}`<br>`{=html}export default function
+  ProjectDashboardXXX(): React.ReactElement {`<br>`{=html} const \[count,
+  setCount\] = React.useState`<number>`{=html}(0);`<br>`{=html} const
+  \[projectName, setProjectName\] =
+  React.useState`<string>`{=html}('');`<br>`{=html} const inputRef =
+  React.useRef`<HTMLInputElement>`{=html}(null);`<br>`{=html}`<br>`{=html}
+  React.useEffect(() =\> {`<br>`{=html}
+  console.log(`El contador cambió a ${count}`);`<br>`{=html} },
+  \[count\]);`<br>`{=html}`<br>`{=html} const focusInput = (): void =\>
+  {`<br>`{=html} inputRef.current?.focus();`<br>`{=html}
+  };`<br>`{=html}`<br>`{=html} return (`<br>`{=html} \<Stack tokens={{
+  childrenGap: 10 }}\>`<br>`{=html}
+  --------------------------------------------------------------------------
 
-```powershell
-import * as React from 'react';
-```
+  --------------------------------------------------------------------------
 
-```powershell
-export default function ProjectDashboard() {
-```
+**Resultado esperado.** El Web Part muestra un `TextField`, dos
+`PrimaryButton` y un `Stack`.
 
-```powershell
-return (
-```
+## Actividad 14. Crear un input controlado y validar la entrada
 
-```powershell
-<div>
-```
+Mantener el valor del formulario en el estado de React y rechazar
+valores vacíos.
 
-```powershell
-<h2>Panel de proyectos</h2>
-```
+### Paso 1. Actualizar el componente
 
-```powershell
-<p>Web Part funcionando correctamente.</p>
-```
+Utiliza esta versión completa.
 
-```powershell
-</div>
-```
+**Archivo:
+src/webparts/projectDashboardXXX/components/ProjectDashboardXXX.tsx**
 
-);
+  -----------------------------------------------------------------------
+  import \* as React from 'react';`<br>`{=html}import {`<br>`{=html}
+  MessageBar,`<br>`{=html} MessageBarType,`<br>`{=html}
+  PrimaryButton,`<br>`{=html} Stack,`<br>`{=html} TextField`<br>`{=html}}
+  from '@fluentui/react';`<br>`{=html}`<br>`{=html}export default
+  function ProjectDashboardXXX(): React.ReactElement {`<br>`{=html} const
+  \[projectName, setProjectName\] =
+  React.useState`<string>`{=html}('');`<br>`{=html} const \[message,
+  setMessage\] =
+  React.useState`<string>`{=html}('');`<br>`{=html}`<br>`{=html} const
+  handleAddProject = (): void =\> {`<br>`{=html} const normalizedName =
+  projectName.trim();`<br>`{=html}`<br>`{=html} if (!normalizedName)
+  {`<br>`{=html} setMessage('Escribe un nombre de
+  proyecto.');`<br>`{=html} return;`<br>`{=html}
+  }`<br>`{=html}`<br>`{=html}
+  setMessage(`Proyecto preparado: ${normalizedName}`);`<br>`{=html}
+  };`<br>`{=html}`<br>`{=html} return (`<br>`{=html} \<Stack tokens={{
+  childrenGap: 10 }}\>`<br>`{=html}
+  -----------------------------------------------------------------------
 
-```powershell
-}
-```
+  -----------------------------------------------------------------------
 
-En Workbench:
+**Resultado esperado.** Al pulsar `Agregar proyecto` con el campo vacío
+aparece el mensaje de validación. Con `Portal SPFx`, aparece
+`Proyecto preparado: Portal SPFx`.
 
-Panel de proyectos
+## Actividad 15. Conectar SharePoint REST
 
-Web Part funcionando correctamente.
+Obtener los elementos de la lista `Proyectos` mediante el cliente
+autenticado de SPFx.
 
-Que:
+### Paso 1. Preparar la interfaz de propiedades
 
-SPFx
+Reemplaza el contenido de `IProjectDashboardProps.ts` por:
 
-React
+**Archivo:
+src/webparts/projectDashboardXXX/components/IProjectDashboardProps.ts**
 
-TSX
+  -----------------------------------------------------------------------
+  import { IProject } from './IProject';`<br>`{=html}`<br>`{=html}export
+  interface IProjectDashboardProps {`<br>`{=html} userDisplayName:
+  string;`<br>`{=html} getProjects: () =\>
+  Promise\<IProject\[\]\>;`<br>`{=html}}
+  -----------------------------------------------------------------------
 
-DOM
+  -----------------------------------------------------------------------
 
-están correctamente conectados.
+### Paso 2. Preparar la función REST
 
-## ACTIVIDAD 8 — Implementar useState
+La función se implementará en el Web Part principal porque
+`this.context.spHttpClient` pertenece al contexto de SPFx.
 
-Ahora convertiremos el Web Part en una interfaz dinámica.
+**Fragmento:
+src/webparts/projectDashboardXXX/ProjectDashboardXXXWebPart.ts**
 
-Reemplaza el componente por:
+  -----------------------------------------------------------------------------------------
+  private async getProjects(): Promise\<IProject\[\]\> {`<br>`{=html} const url
+  =`<br>`{=html} `${this.context.pageContext.web.absoluteUrl}` +`<br>`{=html}
+  `/_api/web/lists/getbytitle('Proyectos')/items` +`<br>`{=html}
+  `?$select=Id,Title,Owner,Status,Description`;`<br>`{=html}`<br>`{=html} const response =
+  await this.context.spHttpClient.get(`<br>`{=html} url,`<br>`{=html}
+  SPHttpClient.configurations.v1`<br>`{=html} );`<br>`{=html}`<br>`{=html} if
+  (!response.ok) {`<br>`{=html} throw new Error(`<br>`{=html}
+  `Error al consultar SharePoint: ${response.status} ${response.statusText}``<br>`{=html}
+  );`<br>`{=html} }`<br>`{=html}`<br>`{=html} const data = await
+  response.json();`<br>`{=html} return data.value as IProject\[\];`<br>`{=html}}
+  -----------------------------------------------------------------------------------------
 
-```powershell
-import * as React from 'react';
-```
+  -----------------------------------------------------------------------------------------
 
-```powershell
-export default function ProjectDashboard() {
-```
+La URL se construye con la URL absoluta del sitio donde está instalado
+el Web Part. No escribas manualmente una URL de tenant dentro del
+código.
 
-```powershell
-const [count, setCount] = React.useState(0);
-```
+**Resultado esperado.** La función solicita únicamente `Id`, `Title`,
+`Owner`, `Status` y `Description` de la lista `Proyectos`.
 
-```powershell
-return (
-```
+## Actividad 16. Pasar los datos de SPFx a React
 
-```powershell
-<div>
-```
+Separar la obtención de datos del contexto SPFx de la presentación
+realizada por React.
 
-```powershell
-<h2>Panel de proyectos</h2>
-```
+### Paso 1. Actualizar el componente React
 
-```powershell
-<p>Has hecho clic {count} veces</p>
-```
+Reemplaza el archivo completo por:
 
-```powershell
-<button onClick={() => setCount(count + 1)}>
-```
+**Archivo:
+src/webparts/projectDashboardXXX/components/ProjectDashboardXXX.tsx**
 
-Incrementar
+  -----------------------------------------------------------------------
+  import \* as React from 'react';`<br>`{=html}import { PrimaryButton,
+  Stack } from '@fluentui/react';`<br>`{=html}import {
+  IProjectDashboardProps } from
+  './IProjectDashboardProps';`<br>`{=html}`<br>`{=html}export default
+  function ProjectDashboardXXX(`<br>`{=html} props:
+  IProjectDashboardProps`<br>`{=html}): React.ReactElement {`<br>`{=html}
+  const \[projects, setProjects\] =
+  React.useState(\[\]);`<br>`{=html}`<br>`{=html} React.useEffect(() =\>
+  {`<br>`{=html} void props.getProjects().then(setProjects);`<br>`{=html}
+  }, \[props.getProjects\]);`<br>`{=html}`<br>`{=html} return
+  (`<br>`{=html} \<Stack tokens={{ childrenGap: 10 }}\>`<br>`{=html}
+  -----------------------------------------------------------------------
 
-```powershell
-</button>
-```
+  -----------------------------------------------------------------------
 
-```powershell
-</div>
-```
+### Paso 2. Pasar las props desde el Web Part
 
-);
+En el método `render()` del Web Part, utiliza `ReactDom.render()` con
+`projects`, `userDisplayName` y `onReloadProjects`. La implementación
+completa del Web Part se proporcionará después de integrar Graph.
 
-```powershell
-}
-```
+**Resultado esperado.** React recibe datos tipados mediante
+`IProjectDashboardProps` y no necesita conocer `SPHttpClient`.
 
-useState(0)
+## Actividad 17. Conectar Microsoft Graph
 
-crea:
+Consultar el perfil del usuario autenticado mediante `Microsoft Graph`.
 
-count
+### Paso 1. Obtener el cliente Graph
 
-setCount
+En el Web Part principal, utiliza `MSGraphClientV3` proporcionado por
+SPFx.
 
-Cuando ejecutamos:
+**Fragmento:
+src/webparts/projectDashboardXXX/ProjectDashboardXXXWebPart.ts**
 
-setCount(count + 1)
+  ----------------------------------------------------------------------------------
+  const client: MSGraphClientV3 =`<br>`{=html} await
+  this.context.msGraphClientFactory.getClient('3');`<br>`{=html}`<br>`{=html}const
+  response = await
+  client.api('/me').select('displayName').get();`<br>`{=html}`<br>`{=html}const
+  userDisplayName = response.displayName as string;
+  ----------------------------------------------------------------------------------
 
-React actualiza el estado y vuelve a renderizar.
+  ----------------------------------------------------------------------------------
 
-## ACTIVIDAD 9 — Implementar useEffect
+### Paso 2. Limitar los datos solicitados
 
-Agrega:
+La consulta solicita solamente `displayName`, que es el dato utilizado
+por la interfaz.
 
-React.useEffect(() => {
+**Resultado esperado.** La llamada a `/me` devuelve el nombre para
+mostrar del usuario autenticado.
 
-console.log(`El contador cambió a ${count}`);
+## Actividad 18. Declarar el permiso User.Read
 
-}, [count]);
+Solicitar únicamente el permiso de `Microsoft Graph` necesario para
+consultar `/me`.
 
-El componente quedará conceptualmente:
+### Paso 1. Abrir package-solution.json
 
-```powershell
-const [count, setCount] = React.useState(0);
-```
+Abre
+`config/`package-solution.json\``. Dentro de la propiedad`solution`, agrega`webApiPermissionRequests\`.
 
-React.useEffect(() => {
+**Archivo: config/package-solution.json --- propiedad dentro de
+solution**
 
-console.log(`El contador cambió a ${count}`);
+  -----------------------------------------------------------------------
+  "skipFeatureDeployment": false,`<br>`{=html}"webApiPermissionRequests":
+  \[`<br>`{=html} {`<br>`{=html} "resource": "Microsoft
+  Graph",`<br>`{=html} "scope": "User.Read"`<br>`{=html} }`<br>`{=html}\]
+  -----------------------------------------------------------------------
 
-}, [count]);
+  -----------------------------------------------------------------------
 
-Probar
+No elimines propiedades existentes de `solution`. Agrega la propiedad
+con una coma válida respecto de la propiedad anterior.
 
-Abre las herramientas del navegador.
+### Paso 2. Validar el JSON
 
-Selecciona Console.
+Guarda el archivo y comprueba que VS Code no muestre un error de
+sintaxis JSON.
 
-Pulsa Incrementar.
+**Resultado esperado.** La solución declara exactamente
+`Microsoft Graph` con el ámbito `User.Read`.
 
-Observa los mensajes.
+## Actividad 19. Aplicar el ciclo de vida con useEffect
 
-useEffect permite ejecutar efectos secundarios.
+Relacionar montaje y desmontaje del componente funcional con el modelo
+de ciclo de vida de componentes de clase.
 
-En SPFx será especialmente importante para:
+### Paso 1. Agregar un efecto con limpieza
 
-llamadas a APIs;
+En \``ProjectDashboardXXX`.tsx\`, utiliza el siguiente patrón:
 
-carga de datos;
+**Fragmento:
+src/webparts/projectDashboardXXX/components/ProjectDashboardXXX.tsx**
 
-suscripciones;
+  -----------------------------------------------------------------------
+  React.useEffect(() =\> {`<br>`{=html} console.log('ProjectDashboardXXX
+  montado');`<br>`{=html}`<br>`{=html} return () =\> {`<br>`{=html}
+  console.log('ProjectDashboardXXX desmontado');`<br>`{=html}
+  };`<br>`{=html}}, \[\]);
+  -----------------------------------------------------------------------
 
-limpieza de recursos.
+  -----------------------------------------------------------------------
 
-## ACTIVIDAD 10 — Implementar useRef
+### Paso 2. Comparar con React clásico
 
-Agrega:
+Interpreta la relación de forma conceptual: `componentDidMount()` se
+aproxima a un \``useEffect`(..., \[\])\`; un efecto con dependencias
+responde a cambios de esas dependencias; la función retornada por el
+efecto se utiliza para limpieza.
 
-```powershell
-const inputRef = React.useRef<HTMLInputElement>(null);
-```
+**Resultado esperado.** La consola registra el montaje y, cuando el
+componente deja de estar presente, puede registrar su desmontaje.
 
-Después:
+## Actividad 20. Convertir useProjects en un hook de carga
 
-```powershell
-const focusInput = () => {
-```
+Encapsular la carga asíncrona de proyectos en un hook reutilizable.
 
-inputRef.current?.focus();
+### Paso 1. Reemplazar useProjects.ts
 
-};
+Utiliza el contenido completo:
 
-Y en el JSX:
+**Archivo: src/webparts/projectDashboardXXX/components/useProjects.ts**
 
-```powershell
-<input
-```
+  -----------------------------------------------------------------------
+  import \* as React from 'react';`<br>`{=html}import { IProject } from
+  './IProject';`<br>`{=html}`<br>`{=html}export function
+  useProjects(`<br>`{=html} loadProjects: () =\>
+  Promise\<IProject\[\]\>`<br>`{=html}): {`<br>`{=html} projects:
+  IProject\[\];`<br>`{=html} reload: () =\>
+  Promise`<void>`{=html};`<br>`{=html}} {`<br>`{=html} const \[projects,
+  setProjects\] =
+  React.useState\<IProject\[\]\>(\[\]);`<br>`{=html}`<br>`{=html} const
+  reload = React.useCallback(async (): Promise`<void>`{=html} =\>
+  {`<br>`{=html} const data = await loadProjects();`<br>`{=html}
+  setProjects(data);`<br>`{=html} },
+  \[loadProjects\]);`<br>`{=html}`<br>`{=html} React.useEffect(() =\>
+  {`<br>`{=html} void reload();`<br>`{=html} },
+  \[reload\]);`<br>`{=html}`<br>`{=html} return {`<br>`{=html}
+  projects,`<br>`{=html} reload`<br>`{=html} };`<br>`{=html}}
+  -----------------------------------------------------------------------
 
-ref={inputRef}
+  -----------------------------------------------------------------------
 
-placeholder="Escribe algo..."
+### Paso 2. Hacer estable la función de carga
 
-/>
+En la implementación final, `getProjects` se define como una función
+flecha de instancia en el Web Part, por lo que su referencia es estable.
+El hook la recibe como dependencia para controlar cuándo debe recargar
+los datos.
 
-```powershell
-<button onClick={focusInput}>
-```
+Patrón conceptual
 
-Focalizar input
+  -----------------------------------------------------------------------
+  const loadProjects = React.useCallback(`<br>`{=html} () =\>
+  this.props.getProjects(),`<br>`{=html} \[this.props\]`<br>`{=html});
+  -----------------------------------------------------------------------
 
-```powershell
-</button>
-```
+  -----------------------------------------------------------------------
 
-La idea clave de este paso es la siguiente:
+Este fragmento es conceptual; la implementación final utiliza la función
+estable proporcionada por el Web Part.
 
-useRef permite conservar una referencia hacia un elemento sin provocar un nuevo renderizado al cambiar esa referencia.
+**Resultado esperado.** El hook recibe una función de carga y administra
+el estado de los proyectos.
 
-El ejemplo del módulo utiliza useRef<HTMLInputElement>(null) para enfocar un campo de texto.
+## Actividad 21. Construir el formulario completo
 
-## ACTIVIDAD 11 — Crear un hook personalizado
+Integrar estado, validación, Fluent UI, proyectos obtenidos desde
+SharePoint y usuario autenticado.
 
-Esta es una de las actividades más importantes del laboratorio.
+### Paso 1. Preparar el componente final
 
-### Paso 1. Crear archivo
+Reemplaza \``ProjectDashboardXXX`.tsx\` por el siguiente archivo
+completo.
 
-Dentro de:
+**Archivo:
+src/webparts/projectDashboardXXX/components/ProjectDashboardXXX.tsx**
 
-components/
+  ----------------------------------------------------------------------------------------
+  import \* as React from 'react';`<br>`{=html}import {`<br>`{=html}
+  MessageBar,`<br>`{=html} MessageBarType,`<br>`{=html} PrimaryButton,`<br>`{=html}
+  Stack,`<br>`{=html} TextField`<br>`{=html}} from '@fluentui/react';`<br>`{=html}import {
+  IProject } from './IProject';`<br>`{=html}import { IProjectDashboardProps } from
+  './IProjectDashboardProps';`<br>`{=html}import { useProjects } from
+  './useProjects';`<br>`{=html}`<br>`{=html}export default function
+  ProjectDashboardXXX(`<br>`{=html} props: IProjectDashboardProps`<br>`{=html}):
+  React.ReactElement {`<br>`{=html} const \[count, setCount\] =
+  React.useState`<number>`{=html}(0);`<br>`{=html} const \[projectName, setProjectName\] =
+  React.useState`<string>`{=html}('');`<br>`{=html} const \[owner, setOwner\] =
+  React.useState`<string>`{=html}('');`<br>`{=html} const \[message, setMessage\] =
+  React.useState`<string>`{=html}('');`<br>`{=html}`<br>`{=html} const inputRef =
+  React.useRef`<HTMLInputElement>`{=html}(null);`<br>`{=html} const { projects, reload } =
+  useProjects(props.getProjects);`<br>`{=html}`<br>`{=html} const handleAddProject = ():
+  void =\> {`<br>`{=html} const normalizedName = projectName.trim();`<br>`{=html} const
+  normalizedOwner = owner.trim();`<br>`{=html}`<br>`{=html} if (!normalizedName)
+  {`<br>`{=html} setMessage('Escribe un nombre de proyecto.');`<br>`{=html}
+  return;`<br>`{=html} }`<br>`{=html}`<br>`{=html} if (!normalizedOwner) {`<br>`{=html}
+  setMessage('Escribe un responsable.');`<br>`{=html} return;`<br>`{=html}
+  }`<br>`{=html}`<br>`{=html} setMessage(`<br>`{=html}
+  `Proyecto preparado: ${normalizedName} — Responsable: ${normalizedOwner}``<br>`{=html}
+  );`<br>`{=html} };`<br>`{=html}`<br>`{=html} const focusInput = (): void =\>
+  {`<br>`{=html} inputRef.current?.focus();`<br>`{=html} };`<br>`{=html}`<br>`{=html}
+  return (`<br>`{=html} \<Stack tokens={{ childrenGap: 10 }}\>`<br>`{=html}
+  ----------------------------------------------------------------------------------------
 
-crea:
+  ----------------------------------------------------------------------------------------
 
-useProjects.ts
+## Actividad 22. Aplicar controles básicos de seguridad
 
-### Paso 2. Crear el hook
+Aplicar mínimo privilegio, evitar almacenamiento manual de tokens,
+validar entradas y utilizar HTTPS.
 
-```powershell
-import * as React from 'react';
-```
+### Paso 1. Mantener el mínimo privilegio
 
-```powershell
-export function useProjects() {
-```
+El único permiso de `Microsoft Graph` solicitado por este laboratorio es
+`User.Read`, porque la aplicación únicamente consulta `/me` para obtener
+`displayName`.
 
-```powershell
-const [projects, setProjects] = React.useState<string[]>([]);
-```
+### Paso 2. No almacenar tokens manualmente
 
-React.useEffect(() => {
+No agregues código que guarde tokens de acceso en `localStorage`,
+`sessionStorage`, cookies creadas por el Web Part o archivos del
+proyecto. SPFx administra el acceso a los servicios autenticados
+mediante sus clientes y contexto.
 
-setProjects([
+### Paso 3. Validar la entrada
 
-```powershell
-"Portal SPFx",
-```
+Antes de aceptar el nombre y el responsable, elimina espacios al inicio
+y al final y rechaza cadenas vacías. No insertes valores proporcionados
+por el usuario mediante `innerHTML`.
 
-```powershell
-"Dashboard Viva",
-```
+### Paso 4. Utilizar HTTPS
 
-```powershell
-"Centro Documental"
-```
+Las llamadas de desarrollo y las llamadas a Microsoft 365 deben utilizar
+los mecanismos HTTPS proporcionados por SPFx. No cambies `https` por
+`http` en `serve.json`.
 
-]);
+**Resultado esperado.** El proyecto solicita únicamente el permiso
+requerido y el formulario rechaza entradas vacías sin almacenar tokens
+manualmente.
 
-}, []);
+## Actividad 23. Revisar optimizaciones básicas de rendimiento
 
-```powershell
-return projects;
-```
+Revisar patrones para evitar llamadas innecesarias, cargar datos
+independientes en paralelo y comprender el propósito de lazy loading.
 
-```powershell
-}
-```
+### Paso 1. Cargar datos independientes en paralelo
 
-Este patrón está basado en el hook useProjects presentado en el módulo.
+Analiza el patrón `Promise.all` del siguiente ejemplo. En este
+laboratorio se estudia como patrón de optimización; no lo incorpores al
+Web Part final porque la carga de usuario y proyectos se realiza
+mediante mecanismos distintos.
 
-### Paso 3. Consumir el hook
+**Fragmento:
+src/webparts/projectDashboardXXX/ProjectDashboardXXXWebPart.ts**
 
-En ProjectDashboard.tsx:
+  -----------------------------------------------------------------------
+  const \[projects, userDisplayName\] = await Promise.all(\[`<br>`{=html}
+  this.getProjects(),`<br>`{=html}
+  this.getUserDisplayName()`<br>`{=html}\]);
+  -----------------------------------------------------------------------
 
-```powershell
-import { useProjects } from './useProjects';
-```
+  -----------------------------------------------------------------------
 
-Después:
+### Paso 2. Evitar llamadas en cada renderizado
 
-```powershell
-const projects = useProjects();
-```
+El hook `useProjects` recibe una función estable mediante
+`React.useCallback`. Su efecto depende de esa función y no se ejecuta
+por cada cambio de estado del formulario.
 
-Y:
+### Paso 3. Comprender lazy loading
 
-```powershell
-<ul>
-```
+El laboratorio solo requiere comprender el patrón. No agregues
+`React.lazy` al Web Part final porque no existe un segundo componente
+que necesitemos cargar de forma diferida.
 
-{projects.map(project => (
+Ejemplo conceptual; no crear este archivo en el laboratorio
 
-```powershell
-<li key={project}>
-```
+  -----------------------------------------------------------------------
+  const DetalleProyecto = React.lazy(`<br>`{=html} () =\>
+  import('./DetalleProyecto')`<br>`{=html});
+  -----------------------------------------------------------------------
 
-{project}
+  -----------------------------------------------------------------------
 
-```powershell
-</li>
-```
+**Resultado esperado.** Identificas cuándo `Promise.all` puede reducir
+el tiempo total de espera y verificas que el Web Part final no repite la
+consulta de proyectos por cada cambio del formulario.
 
-))}
+## Actividad 24. Revisar TypeScript estricto
 
-```powershell
-</ul>
-```
+Comprobar que la configuración del proyecto conserva las reglas de
+TypeScript proporcionadas por el scaffolding.
 
-¿Por qué crear un hook?
+### Paso 1. Abrir tsconfig.json
 
-Porque encapsula lógica reutilizable.
+En la raíz del proyecto abre `tsconfig.json`. Busca la propiedad
+`compilerOptions` y revisa la configuración generada por SPFx.
 
-En lugar de:
+### Paso 2. No modificar la configuración sin necesidad
 
-Componente A
+No agregues ni elimines `strict` únicamente para ocultar errores del
+laboratorio. Si el archivo generado no contiene `"strict": true`,
+conserva la configuración generada por la versión de SPFx utilizada.
 
-carga proyectos
+**Resultado esperado.** La configuración de TypeScript permanece
+compatible con el proyecto generado y los errores de tipos se detectan
+durante la compilación.
 
-Componente B
+## Actividad 25. Compilar la solución
 
-carga proyectos
+Comprobar que TypeScript, React, Fluent UI, SPFx y los archivos de
+configuración pueden procesarse conjuntamente.
 
-Componente C
+### Paso 1. Guardar todos los archivos
 
-carga proyectos
+En VS Code selecciona Archivo \> Guardar todo. Corrige primero cualquier
+indicador rojo de error de TypeScript.
 
-tenemos:
+### Paso 2. Compilar con Heft
 
-useProjects
+Abre una terminal en la raíz del proyecto y ejecuta:
 
-/ | \
+  heft build
+  ------------
 
-Componente A
+**Resultado esperado.** La ejecución termina sin errores. Si aparece un
+error, corrígelo antes de continuar con el empaquetado.
 
-Componente B
+## Actividad 26. Generar el paquete .sppkg
 
-Componente C
-
-## ACTIVIDAD 12 — Incorporar Fluent UI
-
-Construir una interfaz consistente con Microsoft 365.
-
-Fluent UI se plantea en el módulo como una arquitectura modular basada en React y TypeScript, con componentes reutilizables, estilos y temas.
-
-### Paso 1. Importar componentes
-
-En ProjectDashboard.tsx:
-
-```powershell
-import {
-```
-
-Stack,
-
-TextField,
-
-PrimaryButton
-
-} from '@fluentui/react';
-
-### Paso 2. Crear la estructura
-
-```powershell
-<Stack tokens={{ childrenGap: 10 }}>
-```
-
-```powershell
-<h2>Panel de proyectos</h2>
-```
-
-```powershell
-<TextField
-```
-
-label="Nombre del proyecto"
-
-/>
-
-```powershell
-<PrimaryButton
-```
-
-text="Agregar proyecto"
-
-/>
-
-```powershell
-</Stack>
-```
-
-En lugar de crear todos los controles desde cero:
-
-HTML
-
-CSS
-
-JavaScript
-
-utilizamos componentes reutilizables:
-
-TextField
-
-Button
-
-Stack
-
-## ACTIVIDAD 13 — Crear un input controlado
-
-En un input controlado, React mantiene el valor del campo como parte del estado del componente.
-
-Crear un input controlado cuyo valor permanezca sincronizado con el estado de React.
-
-Ahora conectaremos el formulario con React.
-
-### Paso 1. Crear estado
-
-```powershell
-const [projectName, setProjectName] =
-```
-
-React.useState('');
-
-### Paso 2. Conectar el TextField
-
-```powershell
-<TextField
-```
-
-label="Nombre del proyecto"
-
-value={projectName}
-
-onChange={(_, value) =>
-
-setProjectName(value || '')
-
-```powershell
-}
-```
-
-/>
-
-### Paso 3. Mostrar el valor
-
-Agrega:
-
-```powershell
-<p>
-```
-
-Proyecto:
-
-{projectName}
-
-```powershell
-</p>
-```
-
-¿Qué significa "controlado"?
-
-El flujo ahora es:
-
-Usuario escribe
-
-onChange
-
-setProjectName()
-
-React actualiza estado
-
-Render
-
-TextField muestra nuevo valor
-
-## ACTIVIDAD 14 — Validar y transformar la entrada
-
-Validar antes de actualizar el estado evita propagar valores vacíos o normalizables al resto de la interfaz.
-
-Validar y normalizar la entrada antes de actualizar el estado del formulario.
-
-Modifica el evento:
-
-onChange={(_, value) =>
-
-setProjectName(
-
-(value || '').trim()
-
-)
-
-```powershell
-}
-```
-
-También podemos normalizar:
-
-setProjectName(
-
-(value || '').trim().toUpperCase()
-
-)
-
-La validación y transformación temprana evita almacenar datos innecesariamente inconsistentes.
-
-## ACTIVIDAD 15 — Conectar con SharePoint REST
-
-SPHttpClient permite realizar la consulta autenticada hacia SharePoint desde el contexto de la solución.
-
-Consultar la lista Proyectos de SharePoint mediante SharePoint REST.
-
-Ahora el laboratorio deja de ser una simulación.
-
-Vamos a leer la lista:
-
-Proyectos
-
-### Paso 1. Importar SPHttpClient
-
-En el Web Part principal:
-
-```powershell
-import { SPHttpClient } from '@microsoft/sp-http';
-```
-
-### Paso 2. Obtener la información
-
-El contexto de SPFx proporciona:
-
-this.context.spHttpClient
-
-### Paso 3. Crear una función
-
-En el Web Part:
-
-```powershell
-private async getProjects(): Promise<any[]> {
-```
-
-```powershell
-const url =
-```
-
-`${this.context.pageContext.web.absoluteUrl}` +
-
-`/_api/web/lists/getbytitle('Proyectos')/items`;
-
-```powershell
-const response =
-```
-
-await this.context.spHttpClient.get(
-
-url,
-
-SPHttpClient.configurations.v1
-
-);
-
-```powershell
-const data = await response.json();
-```
-
-```powershell
-return data.value;
-```
-
-```powershell
-}
-```
-
-¿Qué hace?
-
-Construye:
-
-```powershell
-https://tenant.sharepoint.com/sites/SPFxLab3
-```
-
-/_api/web/lists/getbytitle('Proyectos')/items
-
-SharePoint devuelve:
-
-{
-
-```powershell
-"value": [
-```
-
-{
-
-```powershell
-"Title": "Portal SPFx",
-```
-
-```powershell
-"Owner": "Miguel"
-```
-
-```powershell
-}
-```
-
-]
-
-```powershell
-}
-```
-
-## ACTIVIDAD 16 — Pasar datos desde SPFx hacia React
-
-Las props separan responsabilidades: SPFx obtiene los datos y React decide cómo presentarlos.
-
-Pasar los datos obtenidos por SPFx al componente React mediante props y tipos TypeScript.
-
-Aquí aparece un concepto fundamental.
-
-SPFx Web Part
-
-obtiene datos
-
-SharePoint REST
-
-Web Part
-
-props
-
-React
-
-ProjectDashboard
-
-El componente React debe recibir los proyectos.
-
-Por ejemplo:
-
-```powershell
-export interface IProject {
-```
-
-Id: number;
-
-```powershell
-Title: string;
-```
-
-```powershell
-Owner: string;
-```
-
-```powershell
-Status: string;
-```
-
-```powershell
-}
-```
-
-Y:
-
-```powershell
-export interface IProjectDashboardProps {
-```
-
-projects: IProject[];
-
-```powershell
-}
-```
-
-Después:
-
-```powershell
-export default function ProjectDashboard(
-```
-
-props: IProjectDashboardProps
-
-) {
-
-Y renderizamos:
-
-{props.projects.map(project => (
-
-```powershell
-<li key={project.Id}>
-```
-
-{project.Title} — {project.Owner}
-
-```powershell
-</li>
-```
-
-))}
-
-## ACTIVIDAD 17 — Conectar Microsoft Graph
-
-Graph permite obtener información del usuario autenticado que no forma parte de la lista Proyectos.
-
-Consultar Microsoft Graph para obtener información del usuario autenticado.
-
-Ahora consultaremos información de Microsoft 365.
-
-Microsoft Graph
-
-Microsoft 365
-
-de:
-
-SharePoint REST
-
-Listas / sitios / campos / búsqueda
-
-### Paso 1. Importar MSGraphClientV3
-
-```powershell
-import { MSGraphClientV3 } from '@microsoft/sp-http';
-```
-
-### Paso 2. Obtener el cliente
-
-```powershell
-const client: MSGraphClientV3 =
-```
-
-await this.context.msGraphClientFactory
-
-.getClient('3');
-
-### Paso 3. Consultar al usuario
-
-```powershell
-const response =
-```
-
-await client.api('/me').get();
-
-### Paso 4. Mostrar el nombre
-
-console.log(response.displayName);
-
-## ACTIVIDAD 18 — Configurar permisos de Microsoft Graph
-
-Los permisos deben corresponder con las operaciones que realmente ejecuta el Web Part y formar parte de la configuración de la solución.
-
-Configurar los permisos de Microsoft Graph necesarios para la funcionalidad del Web Part.
-
-Este paso es crítico.
-
-Un Web Part no debe pedir permisos innecesarios.
-
-En:
-
-config/package-solution.json
-
-localiza:
-
-```powershell
-"webApiPermissionRequests": []
-```
-
-Configura:
-
-```powershell
-"webApiPermissionRequests": [
-```
-
-{
-
-```powershell
-"resource": "Microsoft Graph",
-```
-
-```powershell
-"scope": "User.Read"
-```
-
-```powershell
-}
-```
-
-]
-
-El flujo es:
-
-Web Part
-
-Declara permiso
-
-App Catalog
-
-Administrador
-
-Aprueba permiso
-
-Microsoft Graph
-
-No debemos solicitar:
-
-Directory.ReadWrite.All
-
-si solamente necesitamos:
-
-User.Read
-
-## ACTIVIDAD 19 — Implementar el ciclo de vida
-
-Los hooks permiten expresar en un componente funcional comportamientos que anteriormente se asociaban al ciclo de vida de componentes de clase.
-
-Comprender y aplicar el ciclo de vida del componente mediante hooks de React.
-
-React clásico
-
-componentDidMount()
-
-componentDidUpdate()
-
-componentWillUnmount()
-
-React moderno
-
-useEffect()
-
-useState()
-
-### Paso 1. Comprender componentDidMount
-
-En una clase:
-
-componentDidMount() {
-
-console.log('Componente montado');
-
-```powershell
-}
-```
-
-Se ejecuta una vez después del montaje.
-
-### Paso 2. Comprender componentDidUpdate
-
-componentDidUpdate(
-
-prevProps,
-
-prevState
-
-) {
-
-if (prevState.count !== this.state.count) {
-
-console.log('El contador cambió');
-
-```powershell
-}
-```
-
-```powershell
-}
-```
-
-### Paso 3. Equivalencia moderna
-
-Para un componente funcional:
-
-React.useEffect(() => {
-
-console.log('Componente montado');
-
-}, []);
-
-equivale conceptualmente al montaje.
-
-Y:
-
-React.useEffect(() => {
-
-console.log(`Cambio: ${count}`);
-
-}, [count]);
-
-representa el efecto asociado al cambio de count.
-
-### Paso 4. Aplicarlo al Web Part
-
-Utiliza:
-
-React.useEffect(() => {
-
-console.log('ProjectDashboard montado');
-
-```powershell
-return () => {
-```
-
-console.log('ProjectDashboard desmontado');
-
-};
-
-}, []);
-
-¿Por qué existe return?
-
-Para limpiar:
-
-listeners;
-
-timers;
-
-suscripciones;
-
-recursos temporales.
-
-Esto permite evitar fugas de memoria y comportamientos inesperados.
-
-## ACTIVIDAD 20 — Convertir useProjects en un hook real
-
-Convertir useProjects en un hook que gestione la carga de datos desde SharePoint sin mezclar la lógica de acceso con la presentación.
-
-### Paso 1. Definir el hook
-
-Crea o modifica components/useProjects.ts:
-
-```powershell
-import * as React from 'react';
-```
-
-```powershell
-import { IProject } from './IProject';
-```
-
-```powershell
-export function useProjects(loadProjects: () => Promise<IProject[]>) {
-```
-
-```powershell
-const [projects, setProjects] = React.useState<IProject[]>([]);
-```
-
-React.useEffect(() => {
-
-let cancelled = false;
-
-loadProjects().then(data => {
-
-if (!cancelled) setProjects(data);
-
-});
-
-```powershell
-return () => { cancelled = true; };
-```
-
-}, [loadProjects]);
-
-```powershell
-return projects;
-```
-
-```powershell
-}
-```
-
-### Paso 2. Proporcionar una función estable desde el componente padre
-
-Utiliza React.useCallback para evitar que la función cambie en cada renderizado:
-
-```powershell
-const loadProjects = React.useCallback(() => getProjects(), []);
-```
-
-Después:
-
-```powershell
-const projects = useProjects(loadProjects);
-```
-
-El hook encapsula la carga de datos y el componente se concentra en presentar el resultado.
-
-## ACTIVIDAD 21 — Construir el formulario completo
-
-El formulario reúne en una misma experiencia los conceptos trabajados por separado en las actividades anteriores.
-
-Integrar estado, validación, Fluent UI y datos externos en el formulario completo.
-
-El formulario tendrá:
-
-Nombre
-
-Owner
-
-Status
-
-Con Fluent UI:
-
-```powershell
-<Stack tokens={{ childrenGap: 10 }}>
-```
-
-```powershell
-<TextField
-```
-
-label="Nombre del proyecto"
-
-value={projectName}
-
-onChange={(_, value) =>
-
-setProjectName(value || '')
-
-```powershell
-}
-```
-
-/>
-
-```powershell
-<TextField
-```
-
-label="Responsable"
-
-value={owner}
-
-onChange={(_, value) =>
-
-setOwner(value || '')
-
-```powershell
-}
-```
-
-/>
-
-```powershell
-<PrimaryButton
-```
-
-text="Agregar proyecto"
-
-onClick={handleAddProject}
-
-/>
-
-```powershell
-</Stack>
-```
-
-Validación
-
-Antes de procesar:
-
-if (!projectName.trim()) {
-
-return;
-
-```powershell
-}
-```
-
-Después:
-
-if (!owner.trim()) {
-
-return;
-
-```powershell
-}
-```
-
-Nunca debemos asumir que la entrada del usuario es válida.
-
-## ACTIVIDAD 22 — Seguridad de la información
-
-La seguridad incluye tanto los permisos solicitados como la validación de entradas y la cantidad de información que se expone.
-
-Aplicar controles básicos de seguridad relacionados con permisos, validación y exposición de datos.
-
-Revisaremos cuatro reglas.
-
-### Regla 1 — Mínimo privilegio
-
-Solicitar:
-
-User.Read
-
-y no permisos más amplios si no son necesarios.
-
-### Regla 2 — No guardar tokens manualmente
-
-No hacer:
-
-localStorage.setItem(
-
-```powershell
-"accessToken",
-```
-
-token
-
-);
-
-### Regla 3 — Validar entradas
-
-Antes de mostrar información proveniente de fuentes externas, validar y sanitizar cuando corresponda.
-
-### Regla 4 — HTTPS
-
-Las llamadas externas deben utilizar HTTPS.
-
-## ACTIVIDAD 23 — Optimización de rendimiento
-
-Aplicar optimizaciones básicas para reducir llamadas innecesarias y mejorar el rendimiento.
-
-Aplicaremos tres conceptos del módulo.
-
-1. Evitar llamadas innecesarias
-
-No ejecutar una API cada vez que ocurre un render.
-
-Incorrecto conceptualmente:
-
-render
-
-API
-
-render
-
-API
-
-render
-
-API
-
-Usaremos useEffect con dependencias apropiadas.
-
-2. Ejecutar llamadas en paralelo
-
-Cuando dos consultas son independientes:
-
-```powershell
-const [users, projects] =
-```
-
-await Promise.all([
-
-getUsers(),
-
-getProjects()
-
-]);
-
-3. Lazy loading
-
-Como ejercicio conceptual:
-
-```powershell
-const DetalleProyecto =
-```
-
-React.lazy(
-
-() => import('./DetalleProyecto')
-
-);
-
-Esto permite cargar componentes solamente cuando son necesarios.
-
-## ACTIVIDAD 24 — Revisar TypeScript estricto
-
-Revisar el uso de TypeScript estricto para detectar incompatibilidades antes de ejecutar la solución.
-
-Abre:
-
-tsconfig.json
-
-Revisa la configuración de TypeScript.
-
-```powershell
-"strict": true
-```
-
-cuando corresponda al proyecto, porque permite detectar errores durante la compilación.
-
-## ACTIVIDAD 25 — Compilar la solución
-
-Compilar la solución mediante Heft y comprobar que TypeScript, React, Fluent UI y SPFx pueden procesarse como una única solución.
-
-### Paso 1. Compilar
-
-Desde la raíz:
-
-```powershell
-heft build
-```
-
-La compilación debe terminar sin errores.
-
-Si aparecen errores, corrígelos antes de continuar con el empaquetado.
-
-## ACTIVIDAD 26 — Generar el paquete .sppkg
-
-Generar el paquete de producción que se instalará en SharePoint.
+Crear el artefacto de producción que se publicará en el App Catalog.
 
 ### Paso 1. Generar el paquete
 
-Desde la raíz:
+Desde la raíz del proyecto ejecuta:
 
-```powershell
-heft package-solution --production
-```
+  heft package-solution --production
+  ------------------------------------
 
-### Paso 2. Localizar el artefacto
+### Paso 2. Localizar el paquete
 
-Busca el archivo .sppkg en sharepoint/solution/.
+En VS Code, expande `sharepoint/solution/`. Localiza el archivo `.sppkg`
+generado. El nombre se deriva de la configuración de la solución; no
+asumas que será exactamente `projectdashboard.sppkg`.
 
-Ese archivo será el que publicarás en el App Catalog.
+**Resultado esperado.** Existe un único paquete `.sppkg` correspondiente
+a la ejecución que acabas de realizar.
 
-## ACTIVIDAD 27 — Publicar en el App Catalog
+## Actividad 27. Publicar la solución y aprobar User.Read
 
-Publicar el paquete .sppkg en el App Catalog y completar la implementación de la solución.
+Entregar el paquete al instructor para su publicación en el App Catalog
+compartido y completar la aprobación administrativa del permiso
+solicitado.
 
-### Paso 1
+### Paso 1. Entregar el paquete al instructor
 
-Abre:
+Entrega al instructor el archivo `.sppkg` generado en
+`sharepoint/solution/`. El participante no administra el App Catalog
+compartido.
 
-App Catalog
+### Paso 2. Publicación en el App Catalog
 
-### Paso 2
+El instructor carga el archivo `.sppkg` en la biblioteca
+`Apps for SharePoint` del App Catalog compartido.
 
-En:
+### Paso 3. Confirmar la implementación
 
-Apps for SharePoint
+El instructor confirma la implementación de la solución cuando
+SharePoint muestre la ventana correspondiente.
 
-carga:
+### Paso 4. Revisar Acceso de API
 
-projectdashboard.sppkg
+El instructor abre SharePoint Admin Center \> Más características \>
+Aplicaciones \> Acceso de API y localiza la solicitud pendiente para
+`Microsoft Graph` con el permiso `User.Read`.
 
-### Paso 3
+### Paso 5. Aprobar el permiso
 
-Implementa la aplicación cuando SharePoint lo solicite.
+El instructor selecciona la solicitud `User.Read`, elige Aprobar y
+confirma la aprobación.
 
-### Paso 4
+**Resultado esperado.** El paquete aparece en `Apps for SharePoint` y la
+solicitud de `Microsoft Graph / User.Read` aparece como aprobada.
 
-Si la solución solicita el permiso Microsoft Graph User.Read, la solicitud deberá ser aprobada por un administrador.
+## Actividad 28. Agregar ProjectDashboardXXX a la página
 
-Microsoft Graph
+Agregar el Web Part publicado a la página moderna del sitio de
+laboratorio.
 
-User.Read
+### Paso 1. Abrir la página
 
-el administrador deberá aprobarla.
+Abre `` Portal-`Proyectos`XXX `` y entra en la página
+`Panel de proyectos` creada en la Actividad 1.
 
-## ACTIVIDAD 28 — Instalar en el Site Collection
+### Paso 2. Editar la página
 
-La instalación permite agregar el Web Part a una página y comprobarlo en un contexto de SharePoint real.
+Selecciona Editar.
 
-Instalar la solución en el Site Collection de prueba y agregar el Web Part a una página.
+### Paso 3. Insertar el Web Part
 
-Regresa a:
+Selecciona el botón `+` de una sección de la página. En el selector de
+Web Parts, busca `ProjectDashboardXXX` y selecciónalo.
 
-SPFx Lab 3
+### Paso 4. Publicar la página
 
-Abre:
+Selecciona Publicar o Volver a publicar, según el estado de la página.
 
-Panel de proyectos
+**Resultado esperado.** La página publicada contiene el Web Part
+`ProjectDashboardXXX`.
 
-Selecciona:
+## Actividad 29. Validar el funcionamiento completo
 
-Editar
+Comprobar la interfaz, el estado React, el input controlado, SharePoint
+REST, `Microsoft Graph` y Fluent UI.
 
-Después:
+### Paso 1. Validar el usuario
 
-+
+En el Web Part verifica que aparezca `Usuario:` seguido del nombre de la
+cuenta con la que iniciaste sesión.
 
-Busca:
+### Paso 2. Validar los proyectos
 
-ProjectDashboard
+Verifica que aparezcan los tres registros creados en la lista
+`Proyectos`: `Portal SPFx`, `Dashboard Viva` y `Centro Documental`.
 
-Agrégalo.
+### Paso 3. Validar el input controlado
 
-## ACTIVIDAD 29 — Validar el Web Part
+Escribe `Nuevo proyecto` en `Nombre del proyecto`. El texto escrito debe
+permanecer sincronizado con el estado del componente.
 
-Realiza las siguientes pruebas.
+### Paso 4. Validar la validación
 
-### Prueba 1 — Renderizado
+Borra el contenido de `Nombre del proyecto` y pulsa `Agregar proyecto`.
+Debe aparecer el mensaje `Escribe un nombre de proyecto.`. Escribe
+`Nuevo proyecto` y `Responsable` en el segundo campo; después pulsa
+`Agregar proyecto`.
+
+### Paso 5. Validar Fluent UI
+
+Comprueba visualmente que los campos y botones utilizados por el
+formulario corresponden a componentes de Fluent UI y que la interfaz se
+renderiza sin errores.
+
+### Paso 6. Validar Graph
+
+Abre F12 \> Console y confirma que no existen errores de autorización
+relacionados con `/me`. El nombre mostrado en la interfaz debe
+corresponder al usuario autenticado.
+
+### Paso 7. Validar REST
+
+Comprueba que la lista de proyectos corresponde a los registros
+existentes en `Proyectos`. Si agregas un cuarto elemento directamente en
+la lista de SharePoint, utiliza la función de recarga para comprobar que
+la nueva consulta lo devuelve.
+
+**Resultado esperado.** El Web Part funciona en una página moderna de
+SharePoint y demuestra la integración de React, Fluent UI, SharePoint
+REST y Microsoft Graph.
+
+## Código completo de los archivos principales
+
+Los siguientes bloques representan el estado final de los archivos
+principales utilizados en el laboratorio. Si el generador creó
+propiedades adicionales en los archivos, consérvalas salvo cuando este
+laboratorio indique explícitamente reemplazar el archivo completo.
+
+**Archivo completo:
+src/webparts/projectDashboardXXX/components/IProject.ts**
+
+  -----------------------------------------------------------------------
+  export interface IProject {`<br>`{=html} Id: number;`<br>`{=html}
+  Title: string;`<br>`{=html} Owner: string;`<br>`{=html} Status:
+  string;`<br>`{=html} Description: string;`<br>`{=html}}
+  -----------------------------------------------------------------------
+
+  -----------------------------------------------------------------------
+
+**Archivo completo:
+src/webparts/projectDashboardXXX/components/IProjectDashboardProps.ts**
+
+  -----------------------------------------------------------------------
+  import { IProject } from './IProject';`<br>`{=html}`<br>`{=html}export
+  interface IProjectDashboardProps {`<br>`{=html} userDisplayName:
+  string;`<br>`{=html} getProjects: () =\>
+  Promise\<IProject\[\]\>;`<br>`{=html}}
+  -----------------------------------------------------------------------
+
+  -----------------------------------------------------------------------
+
+**Archivo completo:
+src/webparts/projectDashboardXXX/components/useProjects.ts**
+
+  -----------------------------------------------------------------------
+  import \* as React from 'react';`<br>`{=html}import { IProject } from
+  './IProject';`<br>`{=html}`<br>`{=html}export function
+  useProjects(`<br>`{=html} loadProjects: () =\>
+  Promise\<IProject\[\]\>`<br>`{=html}): {`<br>`{=html} projects:
+  IProject\[\];`<br>`{=html} reload: () =\>
+  Promise`<void>`{=html};`<br>`{=html}} {`<br>`{=html} const \[projects,
+  setProjects\] =
+  React.useState\<IProject\[\]\>(\[\]);`<br>`{=html}`<br>`{=html} const
+  reload = React.useCallback(async (): Promise`<void>`{=html} =\>
+  {`<br>`{=html} const data = await loadProjects();`<br>`{=html}
+  setProjects(data);`<br>`{=html} },
+  \[loadProjects\]);`<br>`{=html}`<br>`{=html} React.useEffect(() =\>
+  {`<br>`{=html} void reload();`<br>`{=html} },
+  \[reload\]);`<br>`{=html}`<br>`{=html} return {`<br>`{=html}
+  projects,`<br>`{=html} reload`<br>`{=html} };`<br>`{=html}}
+  -----------------------------------------------------------------------
+
+  -----------------------------------------------------------------------
+
+**Archivo completo:
+src/webparts/projectDashboardXXX/components/ProjectDashboardXXX.tsx**
+
+  ----------------------------------------------------------------------------------------
+  import \* as React from 'react';`<br>`{=html}import {`<br>`{=html}
+  MessageBar,`<br>`{=html} MessageBarType,`<br>`{=html} PrimaryButton,`<br>`{=html}
+  Stack,`<br>`{=html} TextField`<br>`{=html}} from '@fluentui/react';`<br>`{=html}import {
+  IProject } from './IProject';`<br>`{=html}import { IProjectDashboardProps } from
+  './IProjectDashboardProps';`<br>`{=html}import { useProjects } from
+  './useProjects';`<br>`{=html}`<br>`{=html}export default function
+  ProjectDashboardXXX(`<br>`{=html} props: IProjectDashboardProps`<br>`{=html}):
+  React.ReactElement {`<br>`{=html} const \[count, setCount\] =
+  React.useState`<number>`{=html}(0);`<br>`{=html} const \[projectName, setProjectName\] =
+  React.useState`<string>`{=html}('');`<br>`{=html} const \[owner, setOwner\] =
+  React.useState`<string>`{=html}('');`<br>`{=html} const \[message, setMessage\] =
+  React.useState`<string>`{=html}('');`<br>`{=html}`<br>`{=html} const inputRef =
+  React.useRef`<HTMLInputElement>`{=html}(null);`<br>`{=html} const { projects, reload } =
+  useProjects(props.getProjects);`<br>`{=html}`<br>`{=html} const handleAddProject = ():
+  void =\> {`<br>`{=html} const normalizedName = projectName.trim();`<br>`{=html} const
+  normalizedOwner = owner.trim();`<br>`{=html}`<br>`{=html} if (!normalizedName)
+  {`<br>`{=html} setMessage('Escribe un nombre de proyecto.');`<br>`{=html}
+  return;`<br>`{=html} }`<br>`{=html}`<br>`{=html} if (!normalizedOwner) {`<br>`{=html}
+  setMessage('Escribe un responsable.');`<br>`{=html} return;`<br>`{=html}
+  }`<br>`{=html}`<br>`{=html} setMessage(`<br>`{=html}
+  `Proyecto preparado: ${normalizedName} — Responsable: ${normalizedOwner}``<br>`{=html}
+  );`<br>`{=html} };`<br>`{=html}`<br>`{=html} const focusInput = (): void =\>
+  {`<br>`{=html} inputRef.current?.focus();`<br>`{=html} };`<br>`{=html}`<br>`{=html}
+  return (`<br>`{=html} \<Stack tokens={{ childrenGap: 10 }}\>`<br>`{=html}
+  ----------------------------------------------------------------------------------------
+
+  ----------------------------------------------------------------------------------------
+
+**Archivo completo:
+src/webparts/projectDashboardXXX/ProjectDashboardXXXWebPart.ts**
+
+  -----------------------------------------------------------------------------------------
+  import \* as React from 'react';`<br>`{=html}import \* as ReactDom from
+  'react-dom';`<br>`{=html}import { Version } from
+  '@microsoft/sp-core-library';`<br>`{=html}import { BaseClientSideWebPart } from
+  '@microsoft/sp-webpart-base';`<br>`{=html}import {`<br>`{=html}
+  MSGraphClientV3,`<br>`{=html} SPHttpClient`<br>`{=html}} from
+  '@microsoft/sp-http';`<br>`{=html}`<br>`{=html}import ProjectDashboardXXX from
+  './components/ProjectDashboardXXX';`<br>`{=html}import { IProject } from
+  './components/IProject';`<br>`{=html}import { IProjectDashboardProps } from
+  './components/IProjectDashboardProps';`<br>`{=html}`<br>`{=html}export interface
+  IProjectDashboardXXXWebPartProps {}`<br>`{=html}`<br>`{=html}export default class
+  ProjectDashboardXXXWebPart`<br>`{=html} extends
+  BaseClientSideWebPart`<IProjectDashboardXXXWebPartProps>`{=html}
+  {`<br>`{=html}`<br>`{=html} private readonly getProjects = async ():
+  Promise\<IProject\[\]\> =\> {`<br>`{=html} const url =`<br>`{=html}
+  `${this.context.pageContext.web.absoluteUrl}` +`<br>`{=html}
+  `/_api/web/lists/getbytitle('Proyectos')/items` +`<br>`{=html}
+  `?$select=Id,Title,Owner,Status,Description`;`<br>`{=html}`<br>`{=html} const response =
+  await this.context.spHttpClient.get(`<br>`{=html} url,`<br>`{=html}
+  SPHttpClient.configurations.v1`<br>`{=html} );`<br>`{=html}`<br>`{=html} if
+  (!response.ok) {`<br>`{=html} throw new Error(`<br>`{=html}
+  `Error al consultar SharePoint: ${response.status} ${response.statusText}``<br>`{=html}
+  );`<br>`{=html} }`<br>`{=html}`<br>`{=html} const data = await
+  response.json();`<br>`{=html} return data.value as IProject\[\];`<br>`{=html}
+  };`<br>`{=html}`<br>`{=html} private readonly getUserDisplayName = async ():
+  Promise`<string>`{=html} =\> {`<br>`{=html} const client: MSGraphClientV3 =`<br>`{=html}
+  await this.context.msGraphClientFactory.getClient('3');`<br>`{=html}`<br>`{=html} const
+  response = await client`<br>`{=html} .api('/me')`<br>`{=html}
+  .select('displayName')`<br>`{=html} .get();`<br>`{=html}`<br>`{=html} return
+  response.displayName as string;`<br>`{=html} };`<br>`{=html}`<br>`{=html} private
+  userDisplayName: string = '';`<br>`{=html}`<br>`{=html} protected async onInit():
+  Promise`<void>`{=html} {`<br>`{=html} await super.onInit();`<br>`{=html}
+  this.userDisplayName = await this.getUserDisplayName();`<br>`{=html}
+  }`<br>`{=html}`<br>`{=html} public render(): void {`<br>`{=html} const element:
+  React.ReactElement`<IProjectDashboardProps>`{=html} =`<br>`{=html}
+  React.createElement(ProjectDashboardXXX, {`<br>`{=html} userDisplayName:
+  this.userDisplayName,`<br>`{=html} getProjects: this.getProjects`<br>`{=html}
+  });`<br>`{=html}`<br>`{=html} ReactDom.render(element, this.domElement);`<br>`{=html}
+  }`<br>`{=html}`<br>`{=html} protected onDispose(): void {`<br>`{=html}
+  ReactDom.unmountComponentAtNode(this.domElement);`<br>`{=html}
+  }`<br>`{=html}`<br>`{=html} protected get dataVersion(): Version {`<br>`{=html} return
+  Version.parse('1.0');`<br>`{=html} }`<br>`{=html}}
+  -----------------------------------------------------------------------------------------
 
-Debe aparecer:
+  -----------------------------------------------------------------------------------------
 
-Panel de proyectos
+**Fragmento final: config/package-solution.json --- dentro de solution**
 
-### Prueba 2 — React
+  -----------------------------------------------------------------------
+  "skipFeatureDeployment": false,`<br>`{=html}"webApiPermissionRequests":
+  \[`<br>`{=html} {`<br>`{=html} "resource": "Microsoft
+  Graph",`<br>`{=html} "scope": "User.Read"`<br>`{=html} }`<br>`{=html}\]
+  -----------------------------------------------------------------------
 
-Pulsa:
+  -----------------------------------------------------------------------
 
-Incrementar
+## Comprobación final
 
-El contador debe aumentar.
+Marca cada criterio únicamente cuando hayas comprobado físicamente el
+resultado en el entorno del laboratorio.
 
-### Prueba 3 — Input controlado
+☐ App Catalog disponible.
 
-Escribe:
+☐ Sitio `` Portal-`Proyectos`XXX `` creado y accesible.
 
-Nuevo proyecto
+☐ Página `Panel de proyectos` creada y publicada.
 
-El estado debe actualizarse inmediatamente.
+☐ Lista `Proyectos` creada con las columnas requeridas.
 
-### Prueba 4 — REST
+☐ Lista `Proyectos` contiene los tres registros de prueba.
 
-La lista debe mostrar:
+☐ Node.js 22.23.2 verificado.
 
-Portal SPFx
+☐ Proyecto SPFx 1.23.2 creado mediante Yeoman.
 
-Dashboard Viva
+☐ React 17.0.1 disponible.
 
-Centro Documental
+☐ Fluent UI disponible.
 
-### Prueba 5 — Graph
+☐ Certificado de desarrollo confiado mediante Heft.
 
-Debe aparecer el usuario autenticado.
+☐ `ProjectDashboardXXX` ejecutado en el entorno de prueba.
 
-Por ejemplo:
+☐ `useState` implementado y probado.
 
-Usuario: <nombre del usuario autenticado>
+☐ `useEffect` implementado y probado.
 
-### Prueba 6 — Fluent UI
+☐ `useRef` implementado y probado.
 
-Los controles deben utilizar:
+☐ Hook personalizado `useProjects` implementado.
 
-TextField
+☐ Fluent UI implementado.
 
-PrimaryButton
+☐ Input controlado implementado.
 
-Stack
+☐ Validación de entradas implementada.
 
-## 5. Flujo técnico final
+☐ SharePoint REST devuelve los elementos de `Proyectos`.
 
-El recorrido completo es: la página moderna de SharePoint aloja ProjectDashboard; SPFx proporciona el contexto y los clientes autenticados; los hooks administran estado, efectos y referencias; SharePoint REST y Microsoft Graph proporcionan datos; React renderiza la información mediante componentes de Fluent UI.
+☐ `Microsoft Graph` `/me` devuelve el usuario autenticado.
 
-## 6. Relación entre los hooks y el Web Part
+☐ Solicitud `` Microsoft Graph` / `User.Read `` aprobada.
 
-## 7. Relación entre React clásico y React moderno
+☐ Patrón `Promise.all` revisado como técnica de optimización.
 
-El alumno debe poder interpretar código antiguo y código moderno.
+☐ Solución compilada con `heft build`.
 
-Esta equivalencia forma parte explícita del contenido del Módulo 3.
+☐ Paquete `.sppkg` generado.
 
-## 8. Resultado final del laboratorio
+☐ Paquete publicado en `Apps for SharePoint`.
 
-Al finalizar, tendrás un Web Part ProjectDashboard construido con React, TypeScript y Fluent UI, con estado mediante hooks, formulario controlado, carga de proyectos desde SharePoint REST, información del usuario mediante Microsoft Graph, permisos configurados, validaciones básicas, optimizaciones y un paquete .sppkg desplegado en SharePoint.
+☐ `ProjectDashboardXXX` agregado a la página `Panel de proyectos`.
 
-## 9. Evidencias del laboratorio
+☐ Usuario autenticado visible.
 
-### Evidencia 1 — Ambiente
+☐ `Proyectos` visibles desde SharePoint.
 
-Captura donde se vea:
+☐ Formulario y validación funcionando.
 
-```powershell
-node --version
-```
-
-```powershell
-npm --version
-```
-
-```powershell
-spfx --help
-```
-
-```powershell
-git --version
-```
-
-### Evidencia 2 — Proyecto
-
-Captura de VS Code mostrando:
-
-- src/
-- config/
-- sharepoint/
-### Evidencia 3 — React
-
-Web Part funcionando con:
-
-useState
-
-useEffect
-
-useRef
-
-### Evidencia 4 — Fluent UI
-
-Web Part mostrando:
-
-TextField
-
-PrimaryButton
-
-Stack
-
-### Evidencia 5 — SharePoint REST
-
-Proyectos cargados desde:
-
-Lista Proyectos
-
-### Evidencia 6 — Microsoft Graph
-
-Nombre del usuario obtenido mediante:
-
-/me
-
-### Evidencia 7 — App Catalog
-
-Archivo:
-
-*.sppkg
-
-visible en:
-
-Apps for SharePoint
-
-### Evidencia 8 — Resultado final
-
-Página de SharePoint con:
-
-PANEL DE PROYECTOS
-
-Usuario: __________
-
-Proyecto: [____________________]
-
-Responsable: [__________________]
-
-[ Agregar proyecto ]
-
-Proyectos
-
-- Portal SPFx
-- Dashboard Viva
-- Centro Documental
-## 10. Lista de comprobación final
-
-## 11. Resultado de aprendizaje esperado
-
-Al terminar el laboratorio, podrás explicar y ejecutar el ciclo completo: preparar el entorno, crear el Web Part, construir la interfaz, administrar estado con React, consumir SharePoint REST y Microsoft Graph, validar entradas, aplicar mínimo privilegio y optimizar llamadas, empaquetar la solución, publicarla en el App Catalog y probarla en SharePoint Online.
-
-| Tema del módulo | Actividad del laboratorio |
-|---|---|
-| 3.1 App Catalog y Site Collection | Preparación del tenant |
-| 3.2 Ambiente SPFx | Verificación e instalación |
-| 3.3 Client-Side Web Parts | Creación de ProjectDashboard |
-| 3.4 React dinámico | Componente React |
-| 3.5 Hooks | useState, useEffect, useRef, hook personalizado |
-| 3.6 Fluent UI | TextField, PrimaryButton, Stack |
-| 3.7 Ciclo de vida | Comparación clase vs hooks |
-| 3.8 Inputs controlados | Formulario de nuevo proyecto |
-| 3.9 Preparación para React | Componentes funcionales, TypeScript, hooks y arquitectura |
-| 3.10 Graph y REST | Usuario + proyectos |
-| 3.11 Seguridad y rendimiento | Validación, mínimo privilegio, caché/optimización y lazy loading |
-
-| Columna | Tipo |
-|---|---|
-| Title | Texto |
-| Owner | Texto |
-| Status | Elección |
-| Description | Varias líneas |
-
-| Title | Owner | Status |
-|---|---|---|
-| Portal SPFx | Miguel | Activo |
-| Dashboard Viva | Ana | Activo |
-| Centro Documental | Carlos | En pausa |
-
-| Hook | Uso dentro del laboratorio |
-|---|---|
-| useState | Contador, formulario y datos |
-| useEffect | Carga de proyectos y efectos |
-| useRef | Referencia al input |
-| Hook personalizado | Encapsular carga de proyectos |
-
-| Concepto | React clásico | React moderno |
-|---|---|---|
-| Estado | this.state | useState() |
-| Actualizar estado | setState() | setState() retornado por hook |
-| Montaje | componentDidMount() | useEffect(..., []) |
-| Actualización | componentDidUpdate() | useEffect(..., [dependencia]) |
-| Desmontaje | componentWillUnmount() | cleanup de useEffect() |
-
-| Criterio | Cumplido |
-|---|---|
-| App Catalog disponible | ☐ |
-| Site Collection de prueba creado | ☐ |
-| Lista Proyectos creada | ☐ |
-| Ambiente Node/VS Code preparado | ☐ |
-| Proyecto SPFx creado | ☐ |
-| Client-Side Web Part funcionando | ☐ |
-| React funcionando | ☐ |
-| useState implementado | ☐ |
-| useEffect implementado | ☐ |
-| useRef implementado | ☐ |
-| Hook personalizado implementado | ☐ |
-| Fluent UI implementado | ☐ |
-| Input controlado implementado | ☐ |
-| Validación de entrada implementada | ☐ |
-| Ciclo de vida comprendido | ☐ |
-| SharePoint REST funcionando | ☐ |
-| Microsoft Graph funcionando | ☐ |
-| User.Read solicitado correctamente | ☐ |
-| Mínimo privilegio aplicado | ☐ |
-| Buenas prácticas de rendimiento aplicadas | ☐ |
-| Solución compilada | ☐ |
-| .sppkg generado | ☐ |
-| Solución publicada en App Catalog | ☐ |
-| Web Part instalado en SharePoint | ☐ |
-| Validación final realizada | ☐ |
