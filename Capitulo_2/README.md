@@ -41,7 +41,7 @@ compartido.
 
 - Node.js 22.23.2 y npm disponibles en PATH.
 
-- .4 o posterior para PnP.PowerShell.
+- PowerShell 7.4 o posterior para PnP.PowerShell.
 
 - Git y Visual Studio Code instalados.
 
@@ -92,7 +92,7 @@ where.exe npm
 **Si Node.js ya muestra v22.23.2, conserva la instalación y continúa con
 la verificación.**
 
-<img src="/mnt/data/Laboratorio2_Markdown/media/media/image1.png"
+<img src="media/image1.png"
 style="width:2.54804in;height:1.5704in" />
 
 **Instalar las herramientas globales después de cambiar de versión de
@@ -101,13 +101,13 @@ Node.js.**
 npm install -g yo @microsoft/generator-sharepoint@1.23.2 @rushstack/heft
 @pnp/cli-microsoft365
 
-<img src="/mnt/data/Laboratorio2_Markdown/media/media/image2.png"
+<img src="media/image2.png"
 style="width:6.03454in;height:1.91009in" />
 
 ACTIVIDAD 2 — Verificar herramientas
 
 **Objetivo.** Comprobar que las herramientas que se utilizarán durante
-el módulo responden desde la sesión de .
+el módulo responden desde la sesión de PowerShell 7.
 
 git --version
 
@@ -115,7 +115,7 @@ code --version
 
 pwsh --version
 
-<img src="/mnt/data/Laboratorio2_Markdown/media/media/image3.png"
+<img src="media/image3.png"
 style="width:3.99014in;height:1.62523in" />
 
 **Verificar las herramientas globales.**
@@ -130,7 +130,7 @@ m365 version
 
 Get-InstalledModule PnP.PowerShell
 
-<img src="/mnt/data/Laboratorio2_Markdown/media/media/image4.png"
+<img src="media/image4.png"
 style="width:6.9in;height:1.90833in" />
 
 **Si PnP.PowerShell no está instalado.**
@@ -139,7 +139,7 @@ Install-Module PnP.PowerShell -Scope CurrentUser
 
 Get-InstalledModule PnP.PowerShell
 
-<img src="/mnt/data/Laboratorio2_Markdown/media/media/image5.png"
+<img src="media/image5.png"
 style="width:6.9in;height:0.62222in" />
 
 ACTIVIDAD 3 — Preparar el generador SPFx 1.23.2
@@ -155,10 +155,10 @@ yo --version
 
 yo @microsoft/sharepoint --help
 
-<img src="/mnt/data/Laboratorio2_Markdown/media/media/image6.png"
+<img src="media/image6.png"
 style="width:6.9in;height:1.33958in" />
 
-<img src="/mnt/data/Laboratorio2_Markdown/media/media/image7.png"
+<img src="media/image7.png"
 style="width:6.9in;height:2.78958in" />
 
 No uses una versión diferente del generador para crear el proyecto del
@@ -176,7 +176,7 @@ New-Item -ItemType Directory -Path C:\SPFx -Force
 
 Set-Location C:\SPFx
 
-<img src="/mnt/data/Laboratorio2_Markdown/media/media/image8.png"
+<img src="media/image8.png"
 style="width:6.6676in;height:2.61495in" />
 
 **Ejecutar el generador.**
@@ -194,10 +194,10 @@ aparezcan:
 
 - Template: React
 
-  <img src="/mnt/data/Laboratorio2_Markdown/media/media/image9.png"
+  <img src="media/image9.png"
   style="width:6.9in;height:3.43681in" />
 
-  <img src="/mnt/data/Laboratorio2_Markdown/media/media/image10.png"
+  <img src="media/image10.png"
   style="width:6.9in;height:2.87986in" />
 
 Durante la creación de un proyecto, el generador de SharePoint solicita
@@ -216,7 +216,7 @@ de Tenant-wide deployment. La configuración de ámbito se comprobará y
 ajustará explícitamente en la configuración de empaquetado en una
 actividad posterior.
 
-<img src="/mnt/data/Laboratorio2_Markdown/media/media/image11.png"
+<img src="media/image11.png"
 style="width:4.69749in;height:3.5217in" />
 
 ACTIVIDAD 5 — Configurar el proyecto para un tenant compartido
@@ -244,7 +244,7 @@ Fragmento que debe quedar en package-solution.json
 
 "skipFeatureDeployment": false
 
-<img src="/mnt/data/Laboratorio2_Markdown/media/media/image12.png"
+<img src="media/image12.png"
 style="width:4.5162in;height:3.14989in" />
 
 Si la propiedad aparece con true, cámbiala a false. Si el generador no
@@ -257,7 +257,7 @@ Set-Location C:\SPFx\spfx-lab2-webpart-XXX
 
 Get-Content .\config\package-solution.json
 
-<img src="/mnt/data/Laboratorio2_Markdown/media/media/image13.png"
+<img src="media/image13.png"
 style="width:6.9in;height:2.35972in" />
 
 La solución podrá publicarse en el App Catalog sin solicitar su
@@ -274,7 +274,7 @@ Set-Location C:\SPFx\spfx-lab2-webpart-XXX
 
 code .
 
-<img src="/mnt/data/Laboratorio2_Markdown/media/media/image14.png"
+<img src="media/image14.png"
 style="width:6.9in;height:2.51806in" />
 
 **Revisar las carpetas principales.**
@@ -305,10 +305,10 @@ src\webparts\helloSpfxXXX\components\HelloSpfxXXX.tsx
 
 src\webparts\helloSpfxXXX\components\IHelloSpfxXXXProps.ts
 
-<img src="/mnt/data/Laboratorio2_Markdown/media/media/image15.png"
+<img src="media/image15.png"
 style="width:6.89583in;height:4.89583in" />
 
-<img src="/mnt/data/Laboratorio2_Markdown/media/media/image16.png"
+<img src="media/image16.png"
 style="width:6.9in;height:2.18403in" />
 
 El proyecto moderno utiliza config/rig.json para referenciar el rig de
@@ -356,7 +356,7 @@ owner: "Laboratorio"
 
 console.log(project.name);
 
-<img src="/mnt/data/Laboratorio2_Markdown/media/media/image17.png"
+<img src="media/image17.png"
 style="width:6.89583in;height:5.20833in" />
 
 Guarda el archivo. Desde la terminal integrada de Visual Studio Code,
@@ -368,7 +368,7 @@ asegúrate de encontrarte en la raíz del proyecto:
 
 El proyecto debe compilar correctamente.
 
-<img src="/mnt/data/Laboratorio2_Markdown/media/media/image18.png"
+<img src="media/image18.png"
 style="width:6.9in;height:4.76944in" />
 
 **Provocar el error de tipos.**
@@ -388,7 +388,7 @@ restaurar el valor, el proyecto queda listo para continuar.
 
 Regresa el valor de id a 1. Sin comillas.
 
-<img src="/mnt/data/Laboratorio2_Markdown/media/media/image19.png"
+<img src="media/image19.png"
 style="width:6.9in;height:2.08611in" />
 
 ACTIVIDAD 8 — Implementar estado con React.useState
@@ -493,7 +493,7 @@ heft build
 
 Confirma que la compilación finaliza correctamente.
 
-<img src="/mnt/data/Laboratorio2_Markdown/media/media/image20.png"
+<img src="media/image20.png"
 style="width:6.9in;height:1.66875in" />
 
 ACTIVIDAD 9 — Instalar o sincronizar dependencias y compilar con Heft
@@ -546,7 +546,7 @@ Set-Location C:\SPFx\spfx-lab2-webpart-XXX
 
 heft trust-dev-cert
 
-<img src="/mnt/data/Laboratorio2_Markdown/media/media/image21.png"
+<img src="media/image21.png"
 style="width:5.4718in;height:2.58666in" />
 
 **Configurar el sitio de pruebas para el Workbench.**
@@ -575,15 +575,15 @@ Si aparece una solicitud para permitir scripts de depuración, selecciona
 Allow. Después agrega el Web Part mediante el botón + del Workbench y
 verifica el título, proyecto, propietario, usuario y contador.
 
-<img src="/mnt/data/Laboratorio2_Markdown/media/media/image22.png"
+<img src="media/image22.png"
 style="width:6.9in;height:2.27986in" />
 
-<img src="/mnt/data/Laboratorio2_Markdown/media/media/image23.png"
+<img src="media/image23.png"
 style="width:6.9in;height:3.34097in" />**Resultado esperado.** El Web
 Part se carga desde el servidor local y el contador aumenta al pulsar
 Incrementar.
 
-<img src="/mnt/data/Laboratorio2_Markdown/media/media/image24.png"
+<img src="media/image24.png"
 style="width:6.9in;height:2.38194in" />
 
 Nota de vigencia. El SharePoint Online Workbench está declarado como
@@ -601,7 +601,7 @@ laboratorio mediante una rama de desarrollo.
 
 Configurar la identidad de Git
 
-Abre .
+Abre PowerShell 7.
 
 Configura el nombre que utilizarás para identificar y el correo
 electrónico asociado a tus commits:
@@ -616,7 +616,7 @@ git config --get user.name
 
 git config --get user.email
 
-<img src="/mnt/data/Laboratorio2_Markdown/media/media/image25.png"
+<img src="media/image25.png"
 style="width:5.82373in;height:1.36477in" />
 
 Inicializar el repositorio
@@ -630,7 +630,7 @@ git init
 
 git status
 
-<img src="/mnt/data/Laboratorio2_Markdown/media/media/image26.png"
+<img src="media/image26.png"
 style="width:4.74343in;height:3.65991in" />
 
 En este momento Git debe identificar los archivos del proyecto que
@@ -642,21 +642,21 @@ Agrega los archivos del proyecto al área de preparación:
 
 git add .
 
-<img src="/mnt/data/Laboratorio2_Markdown/media/media/image27.png"
+<img src="media/image27.png"
 style="width:6.9in;height:2.85069in" />
 
 Crea el primer commit:
 
 git commit -m "chore: crear proyecto SPFx inicial"
 
-<img src="/mnt/data/Laboratorio2_Markdown/media/media/image28.png"
+<img src="media/image28.png"
 style="width:4.89062in;height:3.70121in" />
 
 Comprueba nuevamente el estado:
 
 git status
 
-<img src="/mnt/data/Laboratorio2_Markdown/media/media/image29.png"
+<img src="media/image29.png"
 style="width:3.53174in;height:0.73969in" />
 
 Resultado esperado. Git confirma que los archivos del proyecto fueron
@@ -670,7 +670,7 @@ git checkout -b feature/hello-spfx
 
 git branch --show-current
 
-<img src="/mnt/data/Laboratorio2_Markdown/media/media/image30.png"
+<img src="media/image30.png"
 style="width:4.28185in;height:0.96889in" />
 
 La rama feature/hello-spfx será utilizada para registrar los cambios que
@@ -708,7 +708,7 @@ Comprueba el estado:
 
 git status
 
-<img src="/mnt/data/Laboratorio2_Markdown/media/media/image31.png"
+<img src="media/image31.png"
 style="width:6.00084in;height:1.70857in" />
 
 Git debe indicar que el archivo HelloSpfxXXX.tsx fue modificado.
@@ -719,14 +719,14 @@ Agrega la modificación:
 
 git add .
 
-<img src="/mnt/data/Laboratorio2_Markdown/media/media/image32.png"
+<img src="media/image32.png"
 style="width:6.9in;height:0.34931in" />
 
 Crea el segundo commit:
 
 git commit -m "feat: actualizar mensaje del Web Part"
 
-<img src="/mnt/data/Laboratorio2_Markdown/media/media/image33.png"
+<img src="media/image33.png"
 style="width:5.51119in;height:0.88554in" />
 
 Comprueba los dos últimos commits:
@@ -735,7 +735,7 @@ git log --oneline -2
 
 Resultado esperado. El historial muestra dos commits:
 
-<img src="/mnt/data/Laboratorio2_Markdown/media/media/image34.png"
+<img src="media/image34.png"
 style="width:5.88624in;height:0.88554in" />
 
 - el commit inicial de creación del proyecto;
@@ -761,7 +761,7 @@ heft build --production
 
 Espera a que el proceso finalice.
 
-<img src="/mnt/data/Laboratorio2_Markdown/media/media/image35.png"
+<img src="media/image35.png"
 style="width:6.9in;height:2.58333in" />
 
 Resultado esperado. El proceso termina sin errores y muestra que el
@@ -776,24 +776,23 @@ heft package-solution --production
 Este comando genera el paquete de solución que posteriormente será
 cargado en el App Catalog.
 
-<img src="/mnt/data/Laboratorio2_Markdown/media/media/image36.png"
+<img src="media/image36.png"
 style="width:6.9in;height:4.17917in" />
 
 Comprobar el paquete generado
 
 Ejecuta:
 
-Get-ChildItem .\sharepoint\solution\\.sppkg \| Select-Object
-Name,Length,LastWriteTime
+Get-ChildItem .\sharepoint\solution\*.sppkg | Select-Object Name,Length,LastWriteTime
 
-<img src="/mnt/data/Laboratorio2_Markdown/media/media/image37.png"
+<img src="media/image37.png"
 style="width:6.9in;height:1.28264in" />
 
 Identifica el archivo con extensión .sppkg.
 
 La ruta será similar a:
 
-C:\SPFx\spfx-lab2-webpart-XXX\sharepoint\solution\\
+C:\SPFx\spfx-lab2-webpart-XXX\sharepoint\solution\
 
 Resultado esperado. La carpeta sharepoint\solution contiene un archivo
 .sppkg correspondiente a la solución SPFx.
@@ -816,7 +815,7 @@ Confirmar el paquete
 
 El paquete generado en la actividad anterior se encuentra en:
 
-C:\SPFx\spfx-lab2-webpart-XXX\sharepoint\solution\\.sppkg
+C:\SPFx\spfx-lab2-webpart-XXX\sharepoint\solution\*.sppkg
 
 Identifica el archivo .sppkg que utilizarás para la publicación.
 
@@ -827,7 +826,7 @@ Accede al App Catalog del tenant y localiza la biblioteca:
 
 Apps for SharePoint
 
-<img src="/mnt/data/Laboratorio2_Markdown/media/media/image38.png"
+<img src="media/image38.png"
 style="width:6.9in;height:1.95486in" />
 
 Nota. La ubicación exacta de algunas opciones puede variar ligeramente
@@ -841,10 +840,10 @@ la Actividad 14. Cuando SharePoint solicite confirmar la implementación
 de la solución, revisa la información mostrada y confirma la
 publicación.
 
-<img src="/mnt/data/Laboratorio2_Markdown/media/media/image39.png"
+<img src="media/image39.png"
 style="width:3.96593in;height:4.43333in" />
 
-<img src="/mnt/data/Laboratorio2_Markdown/media/media/image40.png"
+<img src="media/image40.png"
 style="width:6.14669in;height:2.66704in" />
 
 Espera a que SharePoint confirme que la aplicación fue agregada
@@ -856,7 +855,7 @@ Abre el sitio:
 
 <https://azurenetecgp1.sharepoint.com/sites/AzureNetecGP1>
 
-<img src="/mnt/data/Laboratorio2_Markdown/media/media/image41.png"
+<img src="media/image41.png"
 style="width:6.9in;height:2.18889in" />Agregar la aplicación al sitio
 
 Dentro del portal, selecciona:
@@ -871,7 +870,7 @@ Localiza la solución:
 
 spfx-lab2-webpart-XXX
 
-<img src="/mnt/data/Laboratorio2_Markdown/media/media/image42.png"
+<img src="media/image42.png"
 style="width:6.9in;height:2.30139in" />
 
 y selecciona Agregar. Espera a que SharePoint termine de instalar la
@@ -891,7 +890,7 @@ HelloSpfxXXX
 
 Agrega el Web Part a la página.
 
-<img src="/mnt/data/Laboratorio2_Markdown/media/media/image43.png"
+<img src="media/image43.png"
 style="width:2.73177in;height:5.95833in" />
 
 Publicar la página
@@ -919,7 +918,7 @@ Has hecho clic 3 veces.
 
 sin necesidad de recargar la página.
 
-<img src="/mnt/data/Laboratorio2_Markdown/media/media/image44.png"
+<img src="media/image44.png"
 style="width:6.9in;height:3.50625in" />
 
 Resultado esperado
@@ -997,4 +996,3 @@ laboratorio.
 ☐ Aplicación agregada al sitio asignado.
 
 ☐ HelloSpfxXXX visible y funcional en SharePoint Online.
-
