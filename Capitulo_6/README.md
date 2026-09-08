@@ -1,5 +1,6 @@
 # Laboratorio 6 
 
+
 Despliegue, versionado, gobernanza y monitoreo de una solución SPFx
 
 Duración: 120 minutos
