@@ -1,5 +1,6 @@
 # Laboratorio 
 
+
 Migración de soluciones SharePoint clásicas a SPFx moderno
 
 Duración: 120 minutos
