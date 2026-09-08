@@ -850,39 +850,23 @@ export default function StatusBadge(
 
 ### 4.5. Agregar iconos
 
-Podemos enriquecerlo con:
+Para enriquecer visualmente el componente, importa `Icon` junto con `Label`:
 
-```text
-import {
+```tsx
+import { Icon, Label } from '@fluentui/react';
 ```
 
-Icon,
+Luego, dentro del componente, agrega el siguiente icono:
 
-Label
-
-```text
-} from '@fluentui/react';
-```
-
-Y:
-
-```text
+```tsx
 <Icon
-```
-
-iconName={
-
-status === 'Completado'
-
-? 'CheckMark'
-
-: 'Clock'
-
-```text
-}
-```
-
+  iconName={
+    status === 'Completado'
+      ? 'CheckMark'
+      : 'Clock'
+  }
 />
+```
 
 ### 4.6. Implementar onDisposeCell()
 
