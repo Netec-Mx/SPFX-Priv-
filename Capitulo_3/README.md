@@ -72,7 +72,7 @@ la página principal de SharePoint. No necesitas permisos de
 administrador para crear tu sitio si la creación de sitios está
 habilitada para los participantes del tenant.
 
-<img src="/mnt/data/Laboratorio3_Markdown/media/image1.png"
+<img src="media/image1.png"
 style="width:6.9in;height:1.94792in" />
 
 ## Paso 2. Iniciar la creación del sitio
@@ -86,10 +86,8 @@ debes solicitar al instructor o al administrador que habilite la
 creación para los participantes o cree el sitio por ti como
 contingencia. Selecciona **Standard Communication**.
 
-<img src="/mnt/data/Laboratorio3_Markdown/media/image2.png"
+<img src="media/image2.png"
 style="width:4.39324in;height:2.93237in" />
-
-## 
 
 ## Paso 3. Configurar el sitio
 
@@ -102,7 +100,7 @@ solicita un idioma, conserva el idioma predeterminado del tenant.
 Completa la creación seleccionando \`Finalizar\`, \`Crear sitio\` o el
 botón equivalente que muestre tu interfaz.
 
-<img src="/mnt/data/Laboratorio3_Markdown/media/image3.png"
+<img src="media/image3.png"
 style="width:5.12268in;height:3.53267in" />
 
 ## Paso 4. Configurar la URL y finalizar la creación
@@ -113,14 +111,16 @@ existe, SharePoint puede proponer una dirección disponible diferente; en
 ese caso, verifica que el sitio creado sea el tuyo antes de continuar.
 Finaliza la creación y espera a que el sitio quede disponible.
 
-## <img src="/mnt/data/Laboratorio3_Markdown/media/image4.png"
-style="width:5.8654in;height:0.87512in" /> Paso 5. Confirmar permisos del sitio
+<img src="media/image4.png"
+style="width:5.8654in;height:0.87512in" />
+
+## Paso 5. Confirmar permisos del sitio
 
 Abre \`Portal-ProyectosXXX\` con tu cuenta. Debes poder editar páginas y
 crear listas. Si puedes abrir el sitio pero no puedes realizar esas
 operaciones, detén el laboratorio y solicita al instructor o al
 administrador del sitio los permisos necesarios.
-<img src="/mnt/data/Laboratorio3_Markdown/media/image5.png"
+<img src="media/image5.png"
 style="width:6.9in;height:2.93472in" />
 
 ## Paso 6. Crear la página de prueba
@@ -130,7 +130,7 @@ plantilla selecciona Pagina en blanco en la parte superior derecha de la
 lista. Asigna el título \`Panel de proyectos\` y publica la página. No
 agregues todavía el Web Part.
 
-<img src="/mnt/data/Laboratorio3_Markdown/media/image6.png"
+<img src="media/image6.png"
 style="width:6.9in;height:3.22014in" />
 
 ## Paso 7. Confirmar el App Catalog compartido
@@ -156,7 +156,7 @@ En \`Portal-ProyectosXXX\`, selecciona Nuevo \> Lista \> Lista en
 blanco. Escribe \`Proyectos\` como nombre. Desactivar **Mostrar lista en
 navegador de sitio** y selecciona Crear.
 
-<img src="/mnt/data/Laboratorio3_Markdown/media/image7.png"
+<img src="media/image7.png"
 style="width:5.12521in;height:2.63688in" />
 
 ## Paso 2. Crear la columna Owner
@@ -164,7 +164,7 @@ style="width:5.12521in;height:2.63688in" />
 Abre la lista \`Proyectos\`. Selecciona + Agregar columna \> Una línea
 de texto. Escribe \`Owner\` como nombre de columna y guarda.
 
-<img src="/mnt/data/Laboratorio3_Markdown/media/image8.png"
+<img src="media/image8.png"
 style="width:3.54216in;height:5.14655in" />
 
 ## Paso 3. Crear la columna Status
@@ -173,10 +173,10 @@ Selecciona + Agregar columna \> Elección. Escribe \`Status\` como
 nombre. Agrega exactamente estas opciones: \`Activo\`, \`En pausa\`,
 \`Finalizado\`. Guarda la columna.
 
-<img src="/mnt/data/Laboratorio3_Markdown/media/image9.png"
+<img src="media/image9.png"
 style="width:3.93595in;height:2.67979in" />
 
-<img src="/mnt/data/Laboratorio3_Markdown/media/image10.png"
+<img src="media/image10.png"
 style="width:2.05835in;height:4.72633in" />
 
 ## Paso 4. Crear la columna Description
@@ -184,17 +184,17 @@ style="width:2.05835in;height:4.72633in" />
 Selecciona + Agregar columna \> Varias líneas de texto. Escribe
 \`Description\` como nombre y guarda.
 
-<img src="/mnt/data/Laboratorio3_Markdown/media/image11.png"
+<img src="media/image11.png"
 style="width:5.87582in;height:3.24003in" />
 
-<img src="/mnt/data/Laboratorio3_Markdown/media/image12.png"
+<img src="media/image12.png"
 style="width:6.9in;height:1.70972in" />
 
 ## Paso 5. Agregar registros
 
 Agrega tres elementos con valores:
 
-<img src="/mnt/data/Laboratorio3_Markdown/media/image13.png"
+<img src="media/image13.png"
 style="width:6.9in;height:2.68125in" />
 
 **Resultado esperado.** La lista \`Proyectos\` contiene tres registros y
@@ -224,7 +224,7 @@ Set-Location C:\SPFx\spfx-lab3-webpart-MAG</th>
 </tbody>
 </table>
 
-<img src="/mnt/data/Laboratorio3_Markdown/media/image14.png"
+<img src="media/image14.png"
 style="width:6.9in;height:2.26389in" />
 
 ## Paso 2. Ejecutar el generador
@@ -248,11 +248,11 @@ preguntas que realmente aparezcan en tu consola.
 
 - Which template would you like to use?: \`React\`
 
-- <img src="/mnt/data/Laboratorio3_Markdown/media/image15.png"
-  style="width:5.57361in;height:3.23276in" />
+<img src="media/image15.png"
+style="width:5.57361in;height:3.23276in" />
 
 En SPFx 1.23.2, después de seleccionar \`React\` no se requieren
-respuestas .
+respuestas adicionales.
 
 ## Paso 3. Configurar el despliegue para el tenant compartido
 
@@ -260,12 +260,10 @@ Abre \`config/package-solution.json\`. Dentro de la propiedad
 \`solution\`, agrega o verifica la propiedad \`skipFeatureDeployment\`
 con el valor \`false\`.
 
-code .
-
 | "skipFeatureDeployment": false |
 |--------------------------------|
 
-<img src="/mnt/data/Laboratorio3_Markdown/media/image16.png"
+<img src="media/image16.png"
 style="width:6.9in;height:1.70139in" />
 
 **Resultado esperado.** La carpeta \`C:\SPFx\spfx-lab3-webpart-XXX\`
@@ -293,10 +291,10 @@ ejecuta:
 | npm install |
 |-------------|
 
-<img src="/mnt/data/Laboratorio3_Markdown/media/image17.png"
+<img src="media/image17.png"
 style="width:5.31135in;height:2.74067in" />
 
-<img src="/mnt/data/Laboratorio3_Markdown/media/image18.png"
+<img src="media/image18.png"
 style="width:5.46951in;height:3.1046in" />
 
 ## Paso 3. Verificar React y Fluent UI
@@ -306,7 +304,7 @@ Ejecuta:
 | npm list react react-dom @fluentui/react --depth=0 |
 |----------------------------------------------------|
 
-<img src="/mnt/data/Laboratorio3_Markdown/media/image19.png"
+<img src="media/image19.png"
 style="width:6.63634in;height:1.36477in" />
 
 **Resultado esperado.** React aparece como \`17.0.1\`. Si
@@ -325,7 +323,7 @@ nuevamente este comando.
 | heft trust-dev-cert |
 |---------------------|
 
-<img src="/mnt/data/Laboratorio3_Markdown/media/image20.png"
+<img src="media/image20.png"
 style="width:5.407in;height:1.26059in" />
 
 **Resultado esperado.** Heft completa el proceso de confianza del
@@ -349,7 +347,7 @@ Localiza exactamente estas carpetas: \`src\`, \`config\` y
 manualmente; aparecerá cuando el proceso de empaquetado genere la salida
 de la solución.
 
-<img src="/mnt/data/Laboratorio3_Markdown/media/image21.png"
+<img src="media/image21.png"
 style="width:2.03409in;height:3.40971in" />
 
 ## Paso 3. Identificar los archivos del Web Part
@@ -358,7 +356,7 @@ Dentro de \`src/webparts/projectDashboardXXX/\`, localiza
 \`ProjectDashboardXXXWebPart.ts\`. Dentro de \`components/\`, localiza
 \`ProjectDashboardXXX.tsx\` y \`ProjectDashboardXXX.module.scss\`.
 
-<img src="/mnt/data/Laboratorio3_Markdown/media/image22.png"
+<img src="media/image22.png"
 style="width:4.79234in;height:2.06279in" />
 
 ## Paso 4. Identificar la configuración
@@ -366,7 +364,7 @@ style="width:4.79234in;height:2.06279in" />
 En la raíz localiza \`package.json\` y \`tsconfig.json\`. En \`config\`,
 localiza \`rig.json\`, \`package-solution.json\` y \`serve.json\`.
 
-<img src="/mnt/data/Laboratorio3_Markdown/media/image23.png"
+<img src="media/image23.png"
 style="width:2.81289in;height:4.66732in" />
 
 **Resultado esperado.** Puedes distinguir el código del Web Part, el
@@ -389,7 +387,7 @@ del sitio de laboratorio a la variable utilizada por SPFx. No incluyas
 |--------------------------------------------------------------------------------------------|
 | \$env:SPFX_SERVE_TENANT_DOMAIN                                                             |
 
-<img src="/mnt/data/Laboratorio3_Markdown/media/image24.png"
+<img src="media/image24.png"
 style="width:6.9in;height:0.57431in" />
 
 ## Paso 2. Iniciar Heft
@@ -413,12 +411,12 @@ de diciembre de 2026. Mientras el entorno del curso continúe
 disponiéndolo, este paso permite probar el proyecto con el contexto de
 SharePoint.
 
-<img src="/mnt/data/Laboratorio3_Markdown/media/image25.png"
+<img src="media/image25.png"
 style="width:6.9in;height:2.49306in" />
 
 Selecciona **Cargar scripts de depuración**
 
-<img src="/mnt/data/Laboratorio3_Markdown/media/image26.png"
+<img src="media/image26.png"
 style="width:6.9in;height:1.22847in" />
 
 El Hosted Workbench de SharePoint Online está en transición: Microsoft
@@ -468,7 +466,7 @@ En el mismo archivo, no agregues propiedades distintas a las definidas.
 El tipo se utilizará para evitar que el componente React dependa de
 objetos sin estructura conocida.
 
-<img src="/mnt/data/Laboratorio3_Markdown/media/image27.png"
+<img src="media/image27.png"
 style="width:6.63634in;height:2.62537in" />
 
 **Resultado esperado.** Existe \`IProject.ts\` con cinco propiedades
@@ -518,7 +516,7 @@ Incrementar<br />
 
 Guarda el archivo. Agrega el componente a la página.
 
-<img src="/mnt/data/Laboratorio3_Markdown/media/image28.png"
+<img src="media/image28.png"
 style="width:6.9in;height:3.61319in" />
 
 Si \`heft start\` continúa ejecutándose, el navegador debe actualizar el
@@ -527,7 +525,7 @@ Web Part. Pulsa \`Incrementar\` dos veces.
 Resultado esperado. El contador cambia de 0 a 1 y después a 2 sin
 recargar la página.
 
-<img src="/mnt/data/Laboratorio3_Markdown/media/image29.png"
+<img src="media/image29.png"
 style="width:6.9in;height:2.05347in" />
 
 # Actividad 9. Implementar useEffect
@@ -596,7 +594,7 @@ src/webparts/projectDashboardXXX/components/ProjectDashboardXXX.tsx
 </tbody>
 </table>
 
-<img src="/mnt/data/Laboratorio3_Markdown/media/image30.png"
+<img src="media/image30.png"
 style="width:6.9in;height:6.47153in" />
 
 React.useEffect(() =\> {
@@ -678,7 +676,7 @@ src/webparts/projectDashboardXXX/components/ProjectDashboardXXX.tsx
 </tbody>
 </table>
 
-<img src="/mnt/data/Laboratorio3_Markdown/media/image31.png"
+<img src="media/image31.png"
 style="width:6.9in;height:1.89028in" />
 
 **Resultado esperado.** Al seleccionar \`Focalizar input\`, el cursor se
@@ -1446,7 +1444,7 @@ No se encontraron proyectos.
 Si ocurre un problema durante la consulta, deberá mostrarse un mensaje
 de error.
 
-<img src="/mnt/data/Laboratorio3_Markdown/media/image32.png"
+<img src="media/image32.png"
 style="width:6.9in;height:3.89306in" />
 
 **Resultado esperado.** El Web Part consulta la lista Proyectos mediante
@@ -2071,8 +2069,6 @@ src/webparts/projectDashboardMag/ProjectDashboardMagWebPart.ts
 y devuelve el nombre para mostrar del usuario autenticado. El Web Part
 obtiene este dato mediante Microsoft Graph y queda preparado para
 utilizarlo posteriormente en la interfaz React.
-
-.
 
 # Actividad 18. Declarar el permiso User.Read
 
@@ -3038,3 +3034,5 @@ resultado en el entorno del laboratorio.
 ☐ Proyectos visibles desde SharePoint.
 
 ☐ Formulario y validación funcionando.
+
+
