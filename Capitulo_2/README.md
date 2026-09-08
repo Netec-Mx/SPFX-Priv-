@@ -997,3 +997,4 @@ laboratorio.
 ☐ Aplicación agregada al sitio asignado.
 
 ☐ HelloSpfxXXX visible y funcional en SharePoint Online.
+
