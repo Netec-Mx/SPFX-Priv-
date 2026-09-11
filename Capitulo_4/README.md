@@ -1,2212 +1,1490 @@
-# Laboratorio 4
+#Laboratorio 4 — Extensiones avanzadas con SPFx
 
-Extensiones avanzadas con SPFx
+Duración estimada: 90 minutos
 
-Duración: 90 minutos
+## Objetivo
 
-## 1. Objetivo general
+Crear extensiones avanzadas de SharePoint Framework (SPFx) para personalizar distintas superficies de SharePoint: la experiencia general mediante Application Customizers, las acciones de una lista mediante un ListView Command Set y la navegación mediante un Application Customizer. En este laboratorio, «Navigation Customizer» es el nombre funcional de la solución de navegación; técnicamente se implementa como un Application Customizer.
 
-Construir una solución de personalización para un sitio de SharePoint Online denominado Portal de Proyectos, utilizando las principales extensiones avanzadas de SPFx estudiadas en el Módulo 4:
+El laboratorio parte del entorno preparado en el Lab 3. Se utiliza SPFx 1.23.2, Node.js 22 LTS y Heft. Cada participante ya dispone del sitio de SharePoint Portal-ProyectosXXX, donde XXX representa sus iniciales.
 
-Application Customizer
+A lo largo del laboratorio, cada extensión se construirá con nombres que incluyen XXX. Antes de ejecutar los comandos o compilar, sustituye XXX por tus iniciales en los nombres indicados.
 
-Field Customizer
+# Actividad 1. Preparar SharePoint para las pruebas
 
-Command Set
+El sitio de SharePoint ya fue creado y está asociado a cada participante. En esta actividad se verifica el acceso al portal y la lista Proyectos que se utilizarán durante las pruebas de las extensiones.
 
-Agrupación de comandos y paneles personalizados
+## Paso 1. Abrir el portal de proyectos
 
-Navigation Customizer
+Abre la siguiente dirección en el navegador, sustituyendo XXX por tus iniciales:
 
-SharePoint REST
-
-Microsoft Graph como integración opcional
-
-Manifiestos y propiedades de extensiones
-
-Despliegue mediante App Catalog
-
-El resultado final será una experiencia similar a:
-
-PORTAL DE PROYECTOS Accesos rápidos ▼
-
-Aviso corporativo / banner global
-
-Inicio | Proyectos | Documentos | Reportes
-
-LISTA: PROYECTOS
-
-Proyecto Responsable Estado
-
-Portal SPFx Ana ✓ Completado
-
-Migración M365 Carlos ◷ En progreso
-
-Automatización Miguel ○ Pendiente
-
-[ Aprobar ] [ Rechazar ] [ Ver detalles ]
-
-Detalles del proyecto
-
-Nombre: Portal SPFx
-
-Responsable: Ana
-
-Estado: Completado
-
-## 2. Contexto del laboratorio
-
-En los módulos anteriores se trabajó con Web Parts SPFx. Un Web Part normalmente ocupa una zona específica de una página.
-
-En este módulo se cambia el enfoque.
-
-Ahora necesitamos modificar la experiencia general de SharePoint, sin tener que modificar el código interno de SharePoint.
-
-Por ejemplo:
-
-mostrar un mensaje corporativo en todas las páginas;
-
-modificar visualmente una columna;
-
-agregar comandos al menú de una lista;
-
-abrir un panel con información del elemento seleccionado;
-
-agregar accesos rápidos a aplicaciones corporativas.
-
-Esto es precisamente lo que el módulo define como extensiones avanzadas de SPFx.
-
-SharePoint Online contiene tres superficies principales que serán personalizadas: páginas, listas y navegación. Application Customizer actuará sobre la experiencia global, Field Customizer sobre las celdas de una columna y Command Set sobre las acciones disponibles para elementos de una lista. Navigation Customizer modificará los accesos de navegación. Estas extensiones pueden integrar React, Fluent UI, SharePoint REST y Microsoft Graph cuando la funcionalidad lo requiera.
-
-SHAREPOINT ONLINE
-
-Página Lista Navegación
-
-Application Field + Navigation
-
-Customizer Command Set Customizer
-
-SPFx Extensions
-
-React Fluent UI APIs
-
-SharePoint Graph
-
-REST
-
-## 3. Temas del Módulo 4 cubiertos
-
-0. Preparar el ambiente.
-
-1. Crear el Site Collection y la lista Proyectos.
-
-2. Crear el Application Customizer para el banner global.
-
-3. Incorporar Fluent UI al Application Customizer.
-
-4. Crear el Field Customizer para la columna Status.
-
-5. Asociar el Field Customizer a la columna Status.
-
-6. Crear el Command Set para Aprobar, Rechazar y Ver detalles.
-
-7. Trabajar con el elemento seleccionado.
-
-8. Agrupar los comandos relacionados.
-
-9. Crear el panel de detalles.
-
-10. Conectar Ver detalles con el panel.
-
-11. Crear el Navigation Customizer.
-
-12. Incorporar Fluent UI al Navigation Customizer.
-
-13. Integrar SharePoint REST y Microsoft Graph.
-
-14. Compilar cada extensión.
-
-15. Generar los paquetes .sppkg.
-
-16. Publicar las soluciones en el App Catalog.
-
-17. Asociar las extensiones al sitio.
-
-18. Ejecutar la prueba integral.
-
-4. Representación general de las actividades
-
-## ACTIVIDAD 0
-
-Preparar las herramientas que utilizarás para crear y probar las extensiones SPFx.
-
-Abre PowerShell y verifica Node.js y npm:
-
-```text
-node --version
+```
+https://azurenetecgp1.sharepoint.com/sites/Portal-ProyectosXXX
 ```
 
-```text
-npm --version
-```
+Comprueba que puedas acceder al sitio con tu cuenta de Microsoft 365 y que el nombre del sitio corresponda a Portal-ProyectosXXX.
 
-El laboratorio utiliza Node.js 22 LTS.
+![Imagen](images/image1.png)
 
-Instala las herramientas globales necesarias:
+## Paso 2. Verificar la lista Proyectos
 
-```text
-npm install @rushstack/heft yo @microsoft/generator-sharepoint --global
-```
+En el sitio, abre la lista Proyectos. Debe estar disponible para realizar las pruebas de las extensiones del laboratorio.
 
-Comprueba Yeoman y Heft:
+Comprueba que la lista contenga, como mínimo, las columnas Title, Owner, Status y Description. Estas columnas se utilizarán durante las pruebas del Command Set y del panel de detalles.
 
-```text
-yo --version
-```
+## Paso 3. Verificar los datos de prueba
 
-```text
-heft --version
-```
+Comprueba que la lista contenga registros de prueba suficientes para seleccionar elementos y comprobar las extensiones. Puedes utilizar los siguientes registros de referencia:
 
-Comprueba Visual Studio Code:
+![Imagen](images/image2.png)
 
-```text
-code --version
-```
-
-Crea la carpeta de trabajo:
-
-```text
-mkdir C:\SPFx
-```
-
-```text
-cd C:\SPFx
-```
-
-```text
-mkdir M4-Extensiones
-```
-
-```text
-cd M4-Extensiones
-```
-
-## ACTIVIDAD 1
-
-Crear Site Collection + lista Proyectos
-
-## ACTIVIDAD 2
-
-Application Customizer
-
-Banner global
-
-## ACTIVIDAD 3
-
-Field Customizer
-
-Estado visual
-
-## ACTIVIDAD 4
-
-Command Set
-
-Aprobar / Rechazar / Detalles
-
-## ACTIVIDAD 5
-
-Panel personalizado
-
-## ACTIVIDAD 6
-
-Navigation Customizer
-
-## ACTIVIDAD 7
-
-Integración y despliegue
-
-RESULTADO FINAL
-
-Portal de Proyectos personalizado
-
-## 5. Arquitectura de la solución
-
-Para que una persona sin experiencia pueda seguir el laboratorio, se trabajará con proyectos separados.
-
-Esto evita que un error en una extensión bloquee todas las demás.
-
-Tendremos:
-
-M4-SPFx-Extensions/
-
-ApplicationCustomizer/
-
-FieldCustomizer/
-
-CommandSet/
-
-NavigationCustomizer/
-
-Al finalizar tendremos cuatro soluciones SPFx que pueden desplegarse independientemente.
-
-## ACTIVIDAD 0 — Preparar el ambiente
-
-### Objetivo
-
-Verificar que el equipo tiene las herramientas necesarias para desarrollar extensiones SPFx.
-
-El contenido del módulo presupone conocimientos de desarrollo SPFx, TypeScript, React y Fluent UI. La documentación actual de Microsoft también establece como prerrequisitos experiencia con JavaScript/TypeScript/Node.js, Visual Studio Code y un tenant de Microsoft 365.
-
-### 0.1. Software necesario
-
-Se utilizará:
-
-- Windows 10/11 o equivalente;
-- Node.js LTS;
-- npm;
-- Visual Studio Code;
-- SharePoint Online;
-- Microsoft 365 tenant;
-- permisos para utilizar un App Catalog;
-- navegador moderno.
-Para proyectos SPFx actuales, Microsoft documenta el toolchain basado en Heft desde SPFx 1.22; para esa línea se utiliza Node.js 22 LTS.
-
-### 0.2. Verificar Node.js
-
-Abrir PowerShell:
-
-```text
-node --version
-```
-
-Después:
-
-```text
-npm --version
-```
-
-SPFx se desarrolla sobre Node.js y utiliza npm para instalar las dependencias.
-
-Si el comando:
-
-node
-
-no existe, primero debe instalarse Node.js.
-
-### 0.3. Instalar las herramientas
-
-Para el toolchain actual documentado por Microsoft:
-
-```text
-npm install @rushstack/heft yo @microsoft/generator-sharepoint --global
-```
-
-Verificar:
-
-```text
-yo --version
-```
-
-```text
-heft --version
-```
-
-gulp --version
-
-Nota: el Módulo 4 no define una versión concreta de Node.js ni un procedimiento de instalación. Por eso esta parte utiliza la preparación oficial actual de Microsoft y se separa del contenido conceptual del PDF. El documento del módulo se concentra en las extensiones y no en la instalación del toolchain.
-
-### 0.4. Instalar Visual Studio Code
-
-Instalar VS Code y comprobar:
-
-```text
-code --version
-```
-
-Microsoft utiliza Visual Studio Code en su documentación de preparación de SPFx.
-
-### 0.5. Crear carpeta de trabajo
-
-```text
-mkdir C:\SPFx
-```
-
-```text
-cd C:\SPFx
-```
-
-```text
-mkdir M4-Extensiones
-```
-
-```text
-cd M4-Extensiones
-```
-
-C:\SPFx\M4-Extensiones
-
-## ACTIVIDAD 1 — Preparar SharePoint
-
-### Objetivo
-
-Crear el sitio y la lista que utilizarán todas las extensiones.
-
-### 1.1. Crear Site Collection
-
-Crear un sitio de SharePoint Online:
-
-Nombre:
-
-Portal de Proyectos
-
-Por ejemplo:
-
-/sites/PortalProyectos
-
-### 1.2. Crear la lista
-
-Dentro del sitio:
-
-Nuevo Lista Lista en blanco
-
-Nombre:
-
-Proyectos
-
-### 1.3. Crear columnas
-
-Configurar:
-
-Para Status:
-
-- Pendiente
-- En progreso
-- Completado
-- Rechazado
-### 1.4. Crear datos de prueba
-
-Agregar:
-
-Porque las extensiones no solamente modifican páginas.
-
-El Field Customizer y el Command Set trabajan directamente sobre el ListView de SharePoint.
-
-## ACTIVIDAD 2 — Application Customizer
-
-### Objetivo
+# Actividad 2. Crear el Application Customizer
 
 Crear una extensión que inserte un mensaje global en SharePoint.
 
-### 2.1. Crear proyecto
+## Paso 1. Crear el proyecto
 
-Desde PowerShell:
+Desde PowerShell, crea la carpeta de la solución, reemplazando XXX por tus iniciales, y cámbiate en ella:
 
-```text
-cd C:\SPFx\M4-Extensiones
 ```
-
-```text
-mkdir ApplicationCustomizer
-```
-
-```text
-cd ApplicationCustomizer
-```
-
-```text
+mkdir C:\SPFx\M4-Extensiones\ApplicationCustomizerXXX 
+cd C:\SPFx\M4-Extensiones\ApplicationCustomizerXXX
 yo @microsoft/sharepoint
 ```
 
 Cuando aparezcan las preguntas del generador, selecciona una extensión y después el tipo Application Customizer.
 
-Selecciona:
+Nombre de la solución: ApplicationCustomizerXXX
 
-Application Customizer
+• Extension
 
-Nombre:
+• Application Customizer
 
-```text
-PortalBanner
+Nombre: PortalBannerXXX
+
+![Imagen](images/image3.png)
+
+## Paso 2. Abrir el proyecto
+
 ```
-
-### 2.2. Abrir proyecto
-
-```text
 code .
 ```
 
-### 2.3. Identificar archivo principal
+## Paso 3. Identificar el archivo principal
 
-Localizar:
+El generador crea una clase TypeScript que representa la extensión Application Customizer. En este archivo se implementará el código que SharePoint ejecutará cuando cargue la extensión.
 
-src
+En el Explorador de VS Code, localiza el archivo generado dentro de la carpeta de la extensión. La ruta y el nombre deben corresponder al identificador utilizado por el generador.
 
-extensions
+## Paso 4. Reemplaza el archivo principal
 
-portalBanner
+Edita: src/extensions/portalBannerXXX/PortalBannerXXXApplicationCustomizer.ts
 
-```text
-PortalBannerApplicationCustomizer.ts
+Selecciona todo su contenido, elimínalo y reemplázalo por el código completo que se proporciona a continuación.
+
+El archivo completo incluye la definición de las propiedades:
+
 ```
-
-### 2.4. Entender la clase
-
-La clase debe extender:
-
-BaseApplicationCustomizer
-
-La estructura conceptual es:
-
-```text
-export default class PortalBanner
-```
-
-extends BaseApplicationCustomizer<IProperties> {
-
-```text
-public onInit(): Promise<void> {
-```
-
-// lógica
-
-```text
-return Promise.resolve();
-```
-
-```text
+export interface IPortalBannerXXXProperties {
+  TopMessage: string;
+  BottomMessage: string;
 }
 ```
 
-```text
-}
+Estas propiedades permiten que los mensajes de la extensión se proporcionen mediante su configuración, en lugar de quedar definidos únicamente dentro de la lógica del componente.
+
+
+Reemplaza el contenido completo del archivo por el siguiente código. En esta primera versión, la barra y el footer se insertan directamente como elementos HTML.
+
+Archivo: src/extensions/portalBannerXXX/PortalBannerXXXApplicationCustomizer.ts
+
 ```
-
-### 2.5. Crear las propiedades
-
-```text
-export interface IPortalBannerProperties {
-```
-
-```text
-TopMessage: string;
-```
-
-```text
-BottomMessage: string;
-```
-
-```text
-}
-```
-
-Así el texto no queda completamente fijo dentro del código.
-
-Tenemos:
-
-Manifiesto
-
-Propiedades
-
-Application Customizer
-
-Mensaje
-
-El ejemplo del módulo utiliza precisamente propiedades TopMessage y BottomMessage.
-
-### 2.6. Obtener el mensaje
-
-Dentro de onInit():
-
-```text
-const topMessage: string =
-```
-
-```text
-this.properties.TopMessage ||
-```
-
-```text
-"Bienvenido al Portal de Proyectos";
-```
-
-```text
-const bottomMessage: string =
-```
-
-```text
-this.properties.BottomMessage ||
-```
-
-```text
-"Información corporativa";
-```
-
-El operador || permite utilizar un valor predeterminado si no se proporcionó una propiedad.
-
-### 2.7. Crear la barra superior
-
-```text
-const header = document.createElement("div");
-```
-
-header.innerText = topMessage;
-
-header.style.padding = "10px";
-
-header.style.background = "#0078d4";
-
-header.style.color = "white";
-
-header.style.textAlign = "center";
-
-```text
-document.body.insertBefore(
-```
-
-header,
-
-```text
-document.body.firstChild
-```
-
-);
-
-En este paso se realiza lo siguiente:
-
-SharePoint
-
-Application Customizer
-
-```text
-document.body
-```
-
-Nuevo elemento HTML
-
-### 2.8. Crear footer
-
-```text
-const footer = document.createElement("div");
-```
-
-footer.innerText = bottomMessage;
-
-footer.style.padding = "8px";
-
-footer.style.background = "#333";
-
-footer.style.color = "white";
-
-footer.style.textAlign = "center";
-
-```text
-document.body.appendChild(footer);
-```
-
-Esto sigue el patrón mostrado en el módulo para insertar un footer global.
-
-## ACTIVIDAD 3 — Application Customizer con Fluent UI
-
-### 3.1. Instalar Fluent UI si el proyecto no lo incluye
-
-```text
-npm install @fluentui/react
-```
-
-### 3.2. Importar
-
-```text
 import {
-```
-
-MessageBar,
-
-MessageBarType
-
-```text
-} from '@fluentui/react';
-```
-
-```text
-import * as React from 'react';
-```
-
-```text
-import * as ReactDom from 'react-dom';
-```
-
-### 3.3. Crear contenedor
-
-```text
-const bar = document.createElement("div");
-```
-
-### 3.4. Renderizar MessageBar
-
-```text
-ReactDom.render(
-```
-
-```text
-<MessageBar
-```
-
-messageBarType={MessageBarType.info}
-
->
-
-Bienvenido al Portal de Proyectos
-
-```text
-</MessageBar>,
-```
-
-bar
-
-);
-
-### 3.5. Insertarlo
-
-```text
-document.body.insertBefore(
-```
-
-bar,
-
-```text
-document.body.firstChild
-```
-
-);
-
-En las páginas de SharePoint aparecerá:
-
-ℹ Bienvenido al Portal de Proyectos
-
-Finalidad
-
-Demostrar que una extensión SPFx puede combinar:
-
-sin modificar el núcleo de SharePoint.
-
-## ACTIVIDAD 4 — Field Customizer
-
-### Objetivo
-
-Modificar visualmente la columna Status de la lista Proyectos.
-
-El Field Customizer no cambia el dato almacenado. Cambia cómo se presenta. El módulo destaca precisamente esta diferencia.
-
-Antes:
-
-- Completado
-- En progreso
-- Pendiente
-Después:
-
-✓ Completado
-
-◷ En progreso
-
-○ Pendiente
-
-### 4.1. Crear proyecto
-
-Desde:
-
-```text
-cd C:\SPFx\M4-Extensiones
-```
-
-```text
-mkdir FieldCustomizer
-```
-
-```text
-cd FieldCustomizer
-```
-
-```text
-yo @microsoft/sharepoint
-```
-
-Seleccionar:
-
-Extension
-
-Field Customizer
-
-Nombre:
-
-```text
-StatusFieldCustomizer
-```
-
-### 4.2. Localizar clase
-
-Buscar:
-
-src/extensions/statusFieldCustomizer/
-
-La clase principal debe extender:
-
-BaseFieldCustomizer
-
-### 4.3. Implementar onRenderCell()
-
-```text
-public onRenderCell(event: any): void {
-```
-
-```text
-const status: string = event.fieldValue;
-```
-
-```text
-const element =
-```
-
-```text
-React.createElement(
-```
-
-StatusBadge,
-
-```text
-{ status }
-```
-
-);
-
-```text
-ReactDom.render(
-```
-
-element,
-
-```text
-event.domElement
-```
-
-);
-
-```text
+  BaseApplicationCustomizer
+} from '@microsoft/sp-application-base';
+
+export interface IPortalBannerXXXProperties {
+  TopMessage: string;
+  BottomMessage: string;
 }
-```
 
-En este caso, significa lo siguiente:
+export default class PortalBannerXXX
+  extends BaseApplicationCustomizer<IPortalBannerXXXProperties> {
 
-Por cada celda:
+  private _topContainer: HTMLDivElement | undefined;
+  private _bottomContainer: HTMLDivElement | undefined;
 
-Celda SharePoint
+  public onInit(): Promise<void> {
+    const topMessage: string =
+      this.properties.TopMessage ||
+      'Bienvenido al Portal-ProyectosXXX';
 
-onRenderCell()
+    const bottomMessage: string =
+Archivo que se va a modificar: src\extensions\portalBannerXXX\PortalBannerXXXApplicationCustomizer.ts
+      'Información corporativa';
 
-```text
-event.fieldValue
-```
+    this._topContainer =
+      document.createElement('div');
 
-StatusBadge
+    this._topContainer.innerText = topMessage;
+    this._topContainer.style.padding = '10px';
+    this._topContainer.style.background = '#0078d4';
+    this._topContainer.style.color = 'white';
+    this._topContainer.style.textAlign = 'center';
 
-### 4.4. Crear StatusBadge
+    document.body.insertBefore(
+      this._topContainer,
+      document.body.firstChild
+    );
 
-Crear:
+    this._bottomContainer =
+      document.createElement('div');
 
-`components/StatusBadge.tsx`
+    this._bottomContainer.innerText = bottomMessage;
+    this._bottomContainer.style.padding = '8px';
+    this._bottomContainer.style.background = '#333';
+    this._bottomContainer.style.color = 'white';
+    this._bottomContainer.style.textAlign = 'center';
 
-Código:
+    document.body.appendChild(
+      this._bottomContainer
+    );
 
-{% raw %}
-```tsx
-import * as React from 'react';
-import { Label } from '@fluentui/react';
-
-export default function StatusBadge(
-  { status }: { status: string }
-) {
-  const color =
-    status === 'Completado'
-      ? 'green'
-      : status === 'En progreso'
-        ? 'orange'
-        : 'gray';
-
-  return (
-    <Label
-      styles={{
-        root: {
-          color,
-          fontWeight: 'bold'
-        }
-      }}
-    >
-      {status}
-    </Label>
-  );
-}
-```
-{% endraw %}
-
-### 4.5. Agregar iconos
-
-Para enriquecer visualmente el componente, importa `Icon` junto con `Label`:
-
-```tsx
-import { Icon, Label } from '@fluentui/react';
-```
-
-Luego, dentro del componente, agrega el siguiente icono:
-
-```tsx
-<Icon
-  iconName={
-    status === 'Completado'
-      ? 'CheckMark'
-      : 'Clock'
+    return Promise.resolve();
   }
-/>
-```
 
-### 4.6. Implementar onDisposeCell()
+  public onDispose(): void {
+    if (this._topContainer) {
+      this._topContainer.remove();
+      this._topContainer = undefined;
+    }
 
-```text
-public onDisposeCell(event: any): void {
-```
-
-```text
-ReactDom.unmountComponentAtNode(
-```
-
-```text
-event.domElement
-```
-
-);
-
-```text
-super.onDisposeCell(event);
-```
-
-```text
+    if (this._bottomContainer) {
+      this._bottomContainer.remove();
+      this._bottomContainer = undefined;
+    }
+  }
 }
 ```
 
-Porque SharePoint puede eliminar o volver a crear las celdas.
+La función onInit se ejecuta cuando SharePoint inicializa la extensión. Los dos contenedores se guardan como propiedades de la clase para poder eliminarlos posteriormente en onDispose.
 
-Debemos limpiar el componente React cuando la celda deja de existir.
+Con esto, ll proyecto contiene el Application Customizer PortalBannerXXX y su código puede crear un mensaje superior y un footer global.
 
-## ACTIVIDAD 5 — Asociar el Field Customizer a la columna
+Editar configuración
 
-El Field Customizer necesita saber:
+Edita el archivo config\serve.json. En serveConfigurations > default > pageUrl, indica la URL de la página principal de tu sitio. En customActions, conserva el GUID que generó Yeoman y comprueba que location sea ClientSideExtension.ApplicationCustomizer.
 
-```text
-"¿A qué columna debo aplicar?"
+```
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/serve.schema.json",
+  "port": 4321,
+  "https": true,
+  "serveConfigurations": {
+    "default": {
+      "pageUrl": "https://azurenetecgp1.sharepoint.com/sites/Portal-ProyectosXXX/SitePages/Home.aspx",
+      "customActions": {
+        "GUID-GENERADO-POR-YEOMAN": {
+          "location": "ClientSideExtension.ApplicationCustomizer",
+          "properties": {
+            "TopMessage": "Bienvenido al Portal-ProyectosXXX",
+            "BottomMessage": "Información corporativa"
+          }
+        }
+      }
+    }
+  }
+}
 ```
 
-En nuestro caso:
+![Imagen](images/image4.png)
 
-Lista:
+Desde tu portal de SharePoint, ubícate en la página principal.
 
-Proyectos
+Desde la terminal, compila y ejecuta con heft
 
-Columna:
+```
+heft build
+heft start
 
-Validación
+```
 
-Abrir:
+![Imagen](images/image5.png)
 
-Portal de Proyectos
+![Imagen](images/image6.png)
 
-Proyectos
+![Imagen](images/image7.png)
 
-Proyecto Owner Status
+# Actividad 3. Integrar Fluent UI en el Application Customizer
 
-Portal SPFx Ana ✓ Completado
+Sustituir el mensaje HTML superior por un componente MessageBar de Fluent UI y conservar el footer global implementado en la actividad anterior.
 
-Migración M365 Carlos ◷ En progreso
+En la actividad anterior se creó el Application Customizer y se comprobó su funcionamiento como extensión de página. Ahora se modificará su implementación para utilizar un componente de Fluent UI en lugar de generar directamente el mensaje superior mediante HTML.
 
-Automatización Miguel ○ Pendiente
+## Paso 1. Reemplazar el archivo completo
 
-## ACTIVIDAD 6 — Command Set
+```
+Archivo: src/extensions/portalBannerXXX/PortalBannerXXXApplicationCustomizer.ts
+```
 
-### Objetivo
+Reemplaza el contenido completo por:
 
-Agregar comandos personalizados a la lista:
+```
+Archivo: src/extensions/portalBannerXXX/PortalBannerXXXApplicationCustomizer.ts
+import * as React from 'react';
+import * as ReactDom from 'react-dom';
+import {
+  BaseApplicationCustomizer
+} from '@microsoft/sp-application-base';
+import * as React from 'react';
+import * as ReactDom from 'react-dom';
 
-- Aprobar
-- Rechazar
-- Ver detalles
-Un Command Set permite agregar acciones personalizadas a los elementos de una lista o biblioteca. En este laboratorio se utilizará para aprobar, rechazar y consultar el proyecto seleccionado.
+import {
+  BaseApplicationCustomizer
+} from '@microsoft/sp-application-base';
 
-### 6.1. Crear proyecto
+import {
+Archivo que se va a modificar: src\extensions\portalBannerXXX\PortalBannerXXXApplicationCustomizer.ts
+  MessageBarType
 
-```text
+
+export interface IPortalBannerXXXProperties {
+  TopMessage: string;
+  BottomMessage: string;
+}
+
+
+
+
+
+  private _bottomContainer: HTMLDivElement | undefined;
+
+  public onInit(): Promise<void> {
+    const topMessage: string =
+      this.properties.TopMessage ||
+      'Bienvenido al Portal-ProyectosXXX';
+
+    const bottomMessage: string =
+      this.properties.BottomMessage ||
+      'Información corporativa';
+
+    this._topContainer =
+      document.createElement('div');
+
+    ReactDom.render(
+      React.createElement(
+        MessageBar,
+        {
+          messageBarType: MessageBarType.info
+        },
+        topMessage
+      ),
+      this._topContainer
+    );
+
+    document.body.insertBefore(
+      this._topContainer,
+      document.body.firstChild
+    );
+
+    this._bottomContainer =
+      document.createElement('div');
+
+    this._bottomContainer.innerText = bottomMessage;
+    this._bottomContainer.style.padding = '8px';
+    this._bottomContainer.style.background = '#333';
+    this._bottomContainer.style.color = 'white';
+    this._bottomContainer.style.textAlign = 'center';
+
+    document.body.appendChild(
+      this._bottomContainer
+    );
+
+    return Promise.resolve();
+  }
+
+  public onDispose(): void {
+    if (this._topContainer) {
+      ReactDom.unmountComponentAtNode(
+        this._topContainer
+      );
+
+      this._topContainer.remove();
+      this._topContainer = undefined;
+    }
+
+    if (this._bottomContainer) {
+      this._bottomContainer.remove();
+      this._bottomContainer = undefined;
+    }
+  }
+}
+```
+
+El componente MessageBar se crea mediante React.createElement porque el Application Customizer trabaja con una clase SPFx y un contenedor HTML creado dinámicamente. ReactDom.render monta el componente dentro de ese contenedor.
+
+## Paso 2. Verificar las dependencias de React y Fluent UI
+
+El código de esta actividad utiliza React, React DOM y Fluent UI. En la terminal del proyecto, comprueba que las dependencias estén disponibles:
+
+```
+npm list react react-dom @fluentui/react
+```
+
+Para SPFx 1.23.2, React y React DOM deben utilizar la versión 17.0.1. Si alguna dependencia de React no aparece, instala las versiones compatibles con el siguiente comando:
+
+## Paso 2. Verificar las dependencias de React y Fluent UI
+
+El código de esta actividad utiliza React, React DOM y Fluent UI. En la terminal del proyecto, comprueba las versiones instaladas:
+
+```
+npm list react react-dom @fluentui/react
+```
+
+En SPFx 1.23.2, React y React DOM deben quedar en la versión 17.0.1. Si alguna aparece en otra versión, corrígela antes de continuar:
+
+```
+npm install react@17.0.1 react-dom@17.0.1 --save-exact
+```
+
+Vuelve a ejecutar la comprobación:
+
+```
+npm list react react-dom @fluentui/react
+```
+
+Si @fluentui/react no aparece, instálalo en el proyecto y vuelve a comprobar las dependencias:
+
+```
+npm install @fluentui/react --save-exact
+```
+
+No continúes con la integración de Fluent UI hasta comprobar que React y React DOM muestran 17.0.1.
+
+
+## Paso 3. Configurar la ejecución de prueba
+
+Archivo que se va a modificar: config\serve.json
+
+```
+        "GUID-GENERADO-POR-YEOMAN": {
+          "location": "ClientSideExtension.ApplicationCustomizer",
+          "properties": {
+            "TopMessage": "Bienvenido al Portal-ProyectosXXX",
+            "BottomMessage": "Extensión SPFx en ejecución"
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+![Imagen](images/image8.png)
+
+La propiedad TopMessage se utiliza como contenido del MessageBar y BottomMessage conserva el mensaje del footer. Si una propiedad no tiene valor, se utiliza el texto predeterminado.
+
+Resultado esperado. Al cargar una página de SharePoint aparece el MessageBar superior con el mensaje configurado y el footer al final de la página. La extensión puede retirar ambos elementos cuando se destruye.
+
+# Actividad 4. Crear el Command Set
+
+Agregar comandos personalizados a los elementos seleccionados de la lista Proyectos: Aprobar, Rechazar y Ver detalles.
+
+## Paso 1. Crear el proyecto
+
+Desde PowerShell, cambia a la carpeta de trabajo del laboratorio y ejecuta los siguientes comandos para crear la solución y entrar en ella:
+
+```
 cd C:\SPFx\M4-Extensiones
-```
-
-```text
-mkdir CommandSet
-```
-
-```text
-cd CommandSet
-```
-
-```text
+mkdir CommandSetXXX
+cd CommandSetXXX
 yo @microsoft/sharepoint
 ```
 
-Seleccionar:
+Cuando se inicie el generador de SharePoint Framework, responde las preguntas con los siguientes valores:
 
-Extension
+1. What is your solution name? → CommandSetXXX
 
-ListView Command Set
+2. Which type of client-side component to create? → Extension
 
-Nombre:
+3. Which type of client-side extension to create? → ListView Command Set
 
-ProjectCommandSet
+4. What is your ListView Command Set name? → ProjectCommandSetXXX
 
-### 6.2. Identificar clase
+![Imagen](images/image9.png)
 
-La clase debe extender:
+## Paso 2. Abrir el proyecto y verificar dependencias
 
-BaseListViewCommandSet
+Cuando termine el generador, abre el proyecto en Visual Studio Code:
 
-### 6.3. Identificar comandos
-
-Vamos a utilizar:
-
-COMMAND_APPROVE
-
-COMMAND_REJECT
-
-COMMAND_DETAILS
-
-Estos identificadores estarán definidos en el manifiesto.
-
-### 6.4. Implementar onExecute()
-
-```text
-public onExecute(event: any): void {
+```
+code .
 ```
 
-switch (event.itemId) {
+En la terminal del proyecto, comprueba que estén disponibles React, React DOM, Fluent UI y el paquete de diálogos que utiliza el Command Set:
 
-case 'COMMAND_APPROVE':
-
-```text
-Dialog.alert(
+```
+npm list react react-dom @fluentui/react @microsoft/sp-dialog
 ```
 
-```text
-'Elemento aprobado'
+Si React o React DOM no aparecen con la versión 17.0.1, instala las versiones exactas y vuelve a comprobar:
+
+```
+npm install react@17.0.1 react-dom@17.0.1 --save-exact
 ```
 
-);
+Si @microsoft/sp-dialog no está disponible, instálalo con la versión del framework:
 
-break;
-
-case 'COMMAND_REJECT':
-
-```text
-Dialog.alert(
+```
+npm install @microsoft/sp-dialog@1.23.2 --save-exact
 ```
 
-```text
-'Elemento rechazado'
+Si @fluentui/react no está disponible, instálalo y vuelve a ejecutar npm list:
+
+```
+npm install @fluentui/react --save-exact
 ```
 
-);
+## Paso 3. Identificar la clase
 
-break;
-
-case 'COMMAND_DETAILS':
-
-```text
-Dialog.alert(
+```
+Archivo que se va a revisar: src\extensions\projectCommandSetXXX\ProjectCommandSetXXXCommandSet.ts
 ```
 
-```text
-'Mostrando detalles del elemento'
+La clase extiende BaseListViewCommandSet. Yeoman genera el archivo principal con el sufijo CommandSet. Por ejemplo, para la solución CommandSetMAG, el archivo es src\extensions\projectCommandSetMag\ProjectCommandSetMagCommandSet.ts y el manifiesto es ProjectCommandSetMagCommandSet.manifest.json. No renombres manualmente los archivos generados.
+
+![Imagen](images/image10.png)
+
+## Paso 4. Definir los identificadores
+
+Abre el manifiesto del Command Set y localiza la propiedad items. Este archivo es donde se declaran los identificadores que SharePoint utilizará para cada comando:
+
+No cambies el valor de la propiedad id que generó Yeoman. Ese GUID identifica de forma única la extensión. En este paso se modifica la propiedad items y se conserva el valor de alias generado por Yeoman.
+
+```
+Archivo que se va a modificar: src\extensions\projectCommandSetXXX\ProjectCommandSetXXXCommandSet.manifest.json
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx/command-set-extension.manifest.schema.json",
+  "id": "GUID-GENERADO-POR-YEOMAN",
+  "alias": "ProjectCommandSetXXXCommandSet",
+  "componentType": "Extension",
+  "extensionType": "ListViewCommandSet",
+  "version": "*",
+  "manifestVersion": 2,
+  "requiresCustomScript": false,
+  "items": {
+    "COMMAND_APPROVE_XXX": {
+      "title": {
+        "default": "Aprobar"
+      },
+      "type": "command"
+    },
+    "COMMAND_REJECT_XXX": {
+      "title": {
+        "default": "Rechazar"
+      },
+      "type": "command"
+    },
+    "COMMAND_DETAILS_XXX": {
+      "title": {
+        "default": "Ver detalles"
+      },
+      "type": "command"
+    }
+  }
+}
+
 ```
 
-);
+Los mismos tres identificadores deben aparecer exactamente iguales en ProjectCommandSetXXXCommandSet.ts, tanto en tryGetCommand() como en los casos de onExecute(). No cambies un identificador en un archivo sin cambiarlo también en el otro.
 
-break;
+Nota sobre GUID. El valor GUID-GENERADO-POR-YEOMAN es solo un marcador en este documento. Conserva el GUID real que Yeoman creó en el manifest y utiliza exactamente ese mismo valor en config\serve.json. No generes ni inventes otro GUID.
 
-```text
+## Paso 5. Reemplazar la clase completa
+
+Reemplaza el contenido completo del archivo por la versión final mostrada a continuación.
+
+```
+Archivo que se va a modificar: src\extensions\projectCommandSetXXX\ProjectCommandSetXXXCommandSet.ts
+import {
+  BaseListViewCommandSet,
+  IListViewCommandSetExecuteEventParameters,
+  IListViewCommandSetListViewUpdatedParameters
+} from '@microsoft/sp-listview-extensibility';
+
+import { Dialog } from '@microsoft/sp-dialog';
+
+export interface IProjectCommandSetXXXProperties {
+  Title: string;
+}
+
+export default class ProjectCommandSetXXXCommandSet
+  extends BaseListViewCommandSet<IProjectCommandSetXXXProperties> {
+
+  public onInit(): Promise<void> {
+    return Promise.resolve();
+  }
+
+  public onListViewUpdated(
+    event: IListViewCommandSetListViewUpdatedParameters
+  ): void {
+    const hasSelection: boolean =
+      event.selectedRows.length > 0;
+
+    const approveCommand =
+      this.tryGetCommand('COMMAND_APPROVE_XXX');
+    const rejectCommand =
+      this.tryGetCommand('COMMAND_REJECT_XXX');
+    const detailsCommand =
+      this.tryGetCommand('COMMAND_DETAILS_XXX');
+
+    if (approveCommand) {
+      approveCommand.visible = hasSelection;
+    }
+    if (rejectCommand) {
+      rejectCommand.visible = hasSelection;
+    }
+    if (detailsCommand) {
+      detailsCommand.visible = hasSelection;
+    }
+  }
+
+  public onExecute(
+    event: IListViewCommandSetExecuteEventParameters
+  ): void {
+    if (event.selectedRows.length === 0) {
+      return;
+    }
+
+    switch (event.itemId) {
+      case 'COMMAND_APPROVE_XXX':
+        void Dialog.alert('Elemento aprobado');
+        break;
+
+      case 'COMMAND_REJECT_XXX':
+        void Dialog.alert('Elemento rechazado');
+        break;
+
+      case 'COMMAND_DETAILS_XXX':
+        void Dialog.alert('Ver detalles seleccionado');
+        break;
+
+      default:
+        throw new Error(
+          `Comando no reconocido: ${event.itemId}`
+        );
+    }
+  }
+
+  public onDispose(): void {
+    // No existen recursos adicionales que liberar.
+  }
+}
+
+
+
+
+
+
+
+```
+
+onListViewUpdated controla la visibilidad de los comandos según exista una selección. onExecute identifica el comando mediante event.itemId. En esta primera versión, Aprobar, Rechazar y Ver detalles muestran una confirmación para comprobar que el Command Set se está ejecutando correctamente.
+
+Resultado esperado. Los tres comandos aparecen cuando existe un elemento seleccionado. Aprobar y Rechazar muestran una confirmación y Ver detalles muestra el mensaje provisional.
+
+# Actividad 5. Trabajar con los datos del elemento seleccionado
+
+Modificar el Command Set para leer Title, Owner y Status del primer elemento seleccionado. El cambio se realiza sobre el archivo completo.
+
+## Paso 1. Reemplazar la clase completa
+
+La versión final obtiene event.selectedRows[0] y consulta los campos mediante getValueByName(), que recibe el nombre interno del campo. En este paso Ver detalles muestra esos valores en un diálogo.
+
+```
+Archivo que se va a modificar: src\extensions\projectCommandSetXXX\ProjectCommandSetXXXCommandSet.ts
+import {
+  BaseListViewCommandSet,
+  IListViewCommandSetExecuteEventParameters,
+  IListViewCommandSetListViewUpdatedParameters
+} from '@microsoft/sp-listview-extensibility';
+
+import { Dialog } from '@microsoft/sp-dialog';
+
+export interface IProjectCommandSetXXXProperties {
+  Title: string;
+}
+
+export default class ProjectCommandSetXXXCommandSet
+  extends BaseListViewCommandSet<IProjectCommandSetXXXProperties> {
+
+  public onInit(): Promise<void> {
+    return Promise.resolve();
+  }
+
+  public onListViewUpdated(
+    event: IListViewCommandSetListViewUpdatedParameters
+  ): void {
+    const hasSelection: boolean =
+      event.selectedRows.length > 0;
+
+    const approveCommand =
+      this.tryGetCommand('COMMAND_APPROVE_XXX');
+
+    const rejectCommand =
+      this.tryGetCommand('COMMAND_REJECT_XXX');
+
+    const detailsCommand =
+      this.tryGetCommand('COMMAND_DETAILS_XXX');
+
+    if (approveCommand) {
+      approveCommand.visible = hasSelection;
+    }
+
+    if (rejectCommand) {
+      rejectCommand.visible = hasSelection;
+    }
+
+    if (detailsCommand) {
+      detailsCommand.visible = hasSelection;
+    }
+  }
+
+  public onExecute(
+    event: IListViewCommandSetExecuteEventParameters
+  ): void {
+    if (event.selectedRows.length === 0) {
+      return;
+    }
+
+    const selectedItem = event.selectedRows[0];
+
+    switch (event.itemId) {
+      case 'COMMAND_APPROVE_XXX':
+        void Dialog.alert('Elemento aprobado');
+        break;
+
+      case 'COMMAND_REJECT_XXX':
+        void Dialog.alert('Elemento rechazado');
+        break;
+
+      case 'COMMAND_DETAILS_XXX': {
+    const title = selectedItem.getValueByName('Title');
+    const owner = selectedItem.getValueByName('Owner');
+    const status = selectedItem.getValueByName('Status');
+
+```
+
+        void Dialog.alert(
+
+          `Proyecto: ${title}\nPropietario: ${owner}\nEstado: ${status}`
+
+```
+        );
+        break;
+      }
+
+      default:
+        throw new Error(
+          `Comando no reconocido: ${event.itemId}`
+        );
+    }
+  }
+
+  public onDispose(): void {
+    // No existen recursos adicionales que liberar.
+  }
 }
 ```
 
-```text
+![Imagen](images/image12.png)
+
+La selección se valida antes de acceder a event.selectedRows[0]. Además, onListViewUpdated mantiene ocultos los comandos cuando no existe selección. Para consultar un campo por su nombre interno se utiliza getValueByName().
+
+
+![Imagen](images/image13.png)
+
+## Paso 2. Probar la lectura de datos
+
+El Command Set debe probarse directamente sobre la vista de la lista Proyectos. Para evitar una configuración incompleta, reemplaza el contenido completo de config\serve.json por el siguiente archivo.
+
+Archivo que se va a modificar: config\serve.json
+
+```
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/spfx-serve.schema.json",
+  "port": 4321,
+  "https": true,
+  "serveConfigurations": {
+    "default": {
+      "pageUrl": "https://azurenetecgp1.sharepoint.com/sites/Portal-ProyectosXXX/Lists/Proyectos/AllItems.aspx",
+      "customActions": {
+        "GUID-GENERADO-POR-YEOMAN": {
+          "location": "ClientSideExtension.ListViewCommandSet.CommandBar",
+          "properties": {}
+        }
+      }
+    }
+  }
 }
+
+
+
+
+
+
+
+
 ```
 
-## ACTIVIDAD 7 — Trabajar con el elemento seleccionado
+Desde la terminal del proyecto CommandSetXXX, ejecuta:
 
-Ahora el comando mostrará información del proyecto seleccionado.
+```
+heft build
+heft start
 
-Queremos conocer el proyecto seleccionado.
 
-Utilizaremos:
 
-```text
-event.selectedRows[0]
 ```
 
-Por ejemplo:
+Como el componente aún no está compilado y publicado, la prueba se realiza en modo depuración sobre la vista de la lista Proyectos.
 
-```text
-const selectedItem =
+https://azurenetecgp1.sharepoint.com/sites/Portal-ProyectosXXX/Lists/Proyectos/AllItems.aspx?loadSPFX=true&debugManifestsFile=https://localhost:4321/temp/build/manifests.js&customActions={"TU_ID_GENERADO":{"location":"ClientSideExtension.ListViewCommandSet.CommandBar","properties":{}}}Abre una URL con esta estructura. Sustituye TU_GUID_GENERADO por el GUID real del manifest y codifica los parámetros JSON si el navegador lo requiere:
+
+```
+https://azurenetecgp1.sharepoint.com/sites/Portal-ProyectosXXX/Lists/Proyectos/AllItems.aspx?loadSPFX=true&debugManifestsFile=https://localhost:4321/temp/build/manifests.js&customActions={"TU_GUID_GENERADO":{"location":"ClientSideExtension.ListViewCommandSet.CommandBar","properties":{}}}
 ```
 
-```text
-event.selectedRows[0];
-```
+La URL utiliza loadSPFX=true y debugManifestsFile=https://localhost:4321/temp/build/manifests.js para cargar la extensión desde el entorno local.
 
-```text
-const title =
-```
+Esto le dice a SharePoint, esencialmente:
 
-```text
-selectedItem.getValue('Title');
-```
+"Carga SPFx desde el entorno de desarrollo y utiliza los manifests que estoy sirviendo desde mi máquina local."
 
-Después:
+El parámetro customActions registra específicamente este Command Set en la vista de la lista.
 
-```text
-Dialog.alert(
-```
+"Registra este Command Set en esta lista."
 
-`Proyecto seleccionado: ${title}`
+Por eso no necesitamos tener la solución compilada, empaquetada e instalada en SharePoint para hacer esta prueba.
 
-);
+Cuando heft start esté ejecutándose, abre la vista Proyectos configurada para las pruebas.
 
-El Command Set trabaja sobre los elementos seleccionados.
+1. Selecciona un elemento de la lista.
 
-```text
-event.selectedRows[0]
-```
+2. Abre el menú de comandos.
 
-y:
+3. Selecciona Ver detalles.
 
-getValue('Title')
+4. Comprueba que el diálogo muestre los valores correspondientes a Title, Owner y Status del elemento seleccionado.
 
-para obtener información del elemento.
+![Imagen](images/image14.png)
 
-## ACTIVIDAD 8 — Agrupar comandos
+Resultado esperado. Para el elemento Portal SPFx, el diálogo muestra Title: Portal SPFx, Owner: Miguel y Status: Completado. Al seleccionar otro proyecto, los valores deben cambiar.
+
+
+# Actividad 6. Agrupar comandos
 
 Configurar los comandos relacionados bajo un mismo grupo de acciones.
 
-Localiza el manifiesto del Command Set y revisa la definición de los comandos.
+## Paso 1. Revisar el manifiesto
 
-Utiliza los identificadores:
+Abre nuevamente el manifiesto del Command Set.
 
-COMMAND_APPROVE
+En esta actividad se reemplaza el objeto items completo para utilizar la agrupación disponible en SPFx 1.23 y posteriores. El grupo y los comandos incluyen iconos porque forman parte de la configuración que se validó en el entorno del laboratorio.
 
-COMMAND_REJECT
+• COMMAND_APPROVE_XXX
 
-COMMAND_DETAILS
+• COMMAND_REJECT_XXX
 
-Configura el grupo con un nombre descriptivo, por ejemplo Acciones del proyecto.
+• COMMAND_DETAILS_XXX
 
-Después de desplegar la extensión, selecciona un elemento de la lista Proyectos y comprueba que los tres comandos aparezcan dentro del mismo contexto.
+## Paso 2. Reemplazar el manifest completo
 
-## ACTIVIDAD 9 — Crear el panel de detalles
+Para evitar errores de llaves, comas o asociaciones entre comandos y grupo, reemplaza el contenido completo del manifest por el archivo final mostrado a continuación.
 
-### Objetivo
-
-Al seleccionar:
-
-- Ver detalles
-queremos abrir un panel lateral.
-
-Detalles del proyecto X
-
-Nombre: Portal SPFx
-
-Propietario: Ana
-
-Estado: Completado
-
-### 9.1. Crear componente
-
-Crear:
-
-components/DetailsPanel.tsx
-
-### 9.2. Código
-
-```text
-import * as React from 'react';
+```
+Archivo que se va a modificar: src\extensions\projectCommandSetXXX\ProjectCommandSetXXXCommandSet.manifest.json
 ```
 
-```text
-import {
+Archivo completo al finalizar el Paso 2
+
 ```
-
-Panel,
-
-Text
-
-```text
-} from '@fluentui/react';
-```
-
-```text
-export default function DetailsPanel(
-```
-
-```text
-{ item, onDismiss }: any
-```
-
-) {
-
-```text
-return (
-```
-
-```text
-<Panel
-```
-
-isOpen={true}
-
-onDismiss={onDismiss}
-
-headerText="Detalles del proyecto"
-
->
-
-```text
-<Text>
-```
-
-Nombre:
-
-```text
-{item.getValue('Title')}
-```
-
-```text
-</Text>
-```
-
-```text
-<br />
-```
-
-```text
-<Text>
-```
-
-Propietario:
-
-```text
-{item.getValue('Owner')}
-```
-
-```text
-</Text>
-```
-
-```text
-<br />
-```
-
-```text
-<Text>
-```
-
-Estado:
-
-```text
-{item.getValue('Status')}
-```
-
-```text
-</Text>
-```
-
-```text
-</Panel>
-```
-
-);
-
-```text
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx/command-set-extension.manifest.schema.json",
+  "id": "GUID-GENERADO-POR-YEOMAN",
+  "alias": "ProjectCommandSetXXXCommandSet",
+  "componentType": "Extension",
+  "extensionType": "ListViewCommandSet",
+  "version": "*",
+  "manifestVersion": 2,
+  "requiresCustomScript": false,
+  "items": {
+    "GROUP_PROJECT_XXX": {
+      "title": { "default": "Acciones del proyecto" },
+      "iconImageUrl": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 2048 2048'%3E%3Cpath d='M1920 640q27 0 45 19t19 45v1152q0 26-19 45t-45 19H128q-26 0-45-19t-19-45V384q0-27 19-45t45-19h768l256 320h768z' fill='%23333333'%3E%3C/path%3E%3C/svg%3E",
+      "type": "group"
+    },
+    "COMMAND_APPROVE_XXX": {
+      "title": { "default": "Aprobar" },
+      "iconImageUrl": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 2048 2048'%3E%3Cpath d='M1024 0q141 0 272 37t240 104 207 160 160 208 103 239 38 272q0 141-37 272t-104 240-160 207-208 160-239 103-272 38q-141 0-272-37t-240-104-207-160-160-208-103-239-38-272q0-141 37-272t104-240 160-207 208-160T752 37t272-37zm128 576H896v384H512v256h384v384h256v-384h384V960h-384V576z' fill='%23333333'%3E%3C/path%3E%3C/svg%3E",
+      "type": "command",
+      "group": "GROUP_PROJECT_XXX"
+    },
+    "COMMAND_REJECT_XXX": {
+      "title": { "default": "Rechazar" },
+      "iconImageUrl": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 2048 2048'%3E%3Cpath d='M1024 0q141 0 272 37t240 104 207 160 160 208 103 239 38 272q0 141-37 272t-104 240-160 207-208 160-239 103-272 38q-141 0-272-37t-240-104-207-160-160-208-103-239-38-272q0-141 37-272t104-240 160-207 208-160T752 37t272-37zm-256 576h512v256H768V576zm0 640h512v256H768v-256z' fill='%23333333'%3E%3C/path%3E%3C/svg%3E",
+      "type": "command",
+      "group": "GROUP_PROJECT_XXX"
+    },
+    "COMMAND_DETAILS_XXX": {
+      "title": { "default": "Ver detalles" },
+      "iconImageUrl": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 2048 2048'%3E%3Cpath d='M1024 0q141 0 272 37t240 104 207 160 160 208 103 239 38 272q0 141-37 272t-104 240-160 207-208 160-239 103-272 38q-141 0-272-37t-240-104-207-160-160-208-103-239-38-272q0-141 37-272t104-240 160-207 208-160T752 37t272-37zm-128 512h256v256H896V512zm0 384h256v640H896V896z' fill='%23333333'%3E%3C/path%3E%3C/svg%3E",
+      "type": "command",
+      "group": "GROUP_PROJECT_XXX"
+    }
+  }
 }
+
+
+
+
 ```
 
-La estructura está basada en el ejemplo incluido en el módulo.
+GROUP_PROJECT_XXX es un identificador nuevo y solo se utiliza para el grupo. Los tres comandos conservan sus identificadores originales porque el código TypeScript depende de ellos. El GUID de id sigue siendo el generado por Yeoman.
 
-## ACTIVIDAD 10 — Conectar Ver detalles con el panel
+Guarda los cambios.
 
-La interacción sigue esta secuencia: el usuario selecciona un proyecto, elige Ver detalles, onExecute() identifica la acción, selectedRows[0] proporciona el elemento y DetailsPanel muestra sus datos mediante Fluent UI.
+## Paso 3. Probar la agrupación
 
-Usuario selecciona proyecto
+Vuelve a ejecutar heft start si lo habías detenido. En la vista Proyectos, selecciona un elemento y comprueba que los tres comandos aparezcan agrupados bajo Acciones del proyecto.
 
-- Ver detalles
-onExecute()
+![Imagen](images/image15.png)
 
-selectedRows[0]
+Nota. La agrupación de ListView Command Sets está disponible a partir de SPFx 1.23. La configuración de este paso corresponde a SPFx 1.23.2.
 
-DetailsPanel
+Resultado esperado. Los comandos Aprobar, Rechazar y Ver detalles aparecen agrupados bajo Acciones del proyecto cuando existe un elemento seleccionado.
 
-Fluent UI Panel
+# Actividad 7. Crear el panel de detalles
 
-Validación
+Mostrar la información del proyecto seleccionado en un panel lateral mediante Fluent UI.
 
-Seleccionar:
+## Paso 1. Crear el componente
 
-Portal SPFx
+Dentro de src\extensions\projectCommandSetXXX crea una carpeta llamada:
 
-Después:
+components
 
-- Acciones del proyecto
-- Ver detalles
-Comprueba que aparezca:
+```
+Archivo que se va a crear: src\extensions\projectCommandSetXXX\components\DetailsPanelXXX.tsx
 
-Detalles del proyecto
+```
 
-Nombre: Portal SPFx
+![Imagen](images/image16.png)
 
-Propietario: Ana
+Crea el archivo y reemplaza su contenido completo por el siguiente código. No agregues código al Command Set principal todavía; la conexión se realizará en la Actividad 8.
 
-Estado: Completado
+```
+import * as React from 'react';
+import { Panel, Text } from '@fluentui/react';
 
-## ACTIVIDAD 11 — Navigation Customizer
+export interface IDetailsPanelXXXProps {
+  item: any;
+  onDismiss: () => void;
+}
 
-### Objetivo
+export default function DetailsPanelXXX(
+  props: IDetailsPanelXXXProps
+): React.ReactElement {
+  const title = props.item.getValueByName('Title');
+  const owner = props.item.getValueByName('Owner');
+  const status = props.item.getValueByName('Status');
 
-Agregar accesos rápidos a la navegación.
+  return (
+    <Panel
+      isOpen={true}
+      onDismiss={props.onDismiss}
+      headerText="Detalles del proyecto"
+    >
+      <Text>Nombre: {title}</Text>
+      <br />
+      <Text>Propietario: {owner}</Text>
+      <br />
+      <Text>Estado: {status}</Text>
+    </Panel>
+  );
+}
 
-### 11.1. Crear proyecto
 
-```text
+
+```
+
+El componente recibe el elemento seleccionado y una función onDismiss. El Panel se abre con isOpen=true. Para obtener los datos se utiliza getValueByName() con los nombres internos Title, Owner y Status. La captura que acompaña esta actividad se conserva como referencia visual de la estructura del archivo; no copies el uso de getValue() que aparece en ella. El código final que debe copiarse es el bloque anterior y utiliza getValueByName().
+
+![Imagen](images/image17.png)
+
+# Actividad 8. Conectar Ver detalles con el panel
+
+Conectar la selección de un elemento, el comando Ver detalles y el componente DetailsPanelXXX. En este paso se reemplaza el archivo completo del Command Set.
+
+## Paso 1. Reemplazar la clase completa
+
+La clase final importa DetailsPanelXXX, mantiene la visibilidad de los comandos según exista una selección, crea un contenedor HTML, monta el panel con ReactDom.render() y lo limpia con closeDetails(). El caso COMMAND_DETAILS_XXX pasa el primer elemento seleccionado al panel.
+
+```
+Archivo que se va a modificar: src\extensions\projectCommandSetXXX\ProjectCommandSetXXXCommandSet.ts
+import * as React from 'react';
+import * as ReactDom from 'react-dom';
+import {
+  BaseListViewCommandSet,
+  IListViewCommandSetExecuteEventParameters,
+  IListViewCommandSetListViewUpdatedParameters
+} from '@microsoft/sp-listview-extensibility';
+import { Dialog } from '@microsoft/sp-dialog';
+import DetailsPanelXXX from './components/DetailsPanelXXX';
+
+export interface IProjectCommandSetXXXProperties {
+  Title: string;
+}
+
+export default class ProjectCommandSetXXXCommandSet
+  extends BaseListViewCommandSet<IProjectCommandSetXXXProperties> {
+  private _detailsContainer: HTMLDivElement | undefined;
+
+  public onInit(): Promise<void> {
+    return Promise.resolve();
+  }
+
+  public onListViewUpdated(
+    event: IListViewCommandSetListViewUpdatedParameters
+  ): void {
+    const hasSelection = event.selectedRows.length > 0;
+    const approveCommand = this.tryGetCommand('COMMAND_APPROVE_XXX');
+    const rejectCommand = this.tryGetCommand('COMMAND_REJECT_XXX');
+    const detailsCommand = this.tryGetCommand('COMMAND_DETAILS_XXX');
+    if (approveCommand) { approveCommand.visible = hasSelection; }
+    if (rejectCommand) { rejectCommand.visible = hasSelection; }
+    if (detailsCommand) { detailsCommand.visible = hasSelection; }
+  }
+
+  public onExecute(
+    event: IListViewCommandSetExecuteEventParameters
+  ): void {
+    if (event.selectedRows.length === 0) { return; }
+    switch (event.itemId) {
+      case 'COMMAND_APPROVE_XXX':
+        void Dialog.alert('Elemento aprobado');
+        break;
+      case 'COMMAND_REJECT_XXX':
+        void Dialog.alert('Elemento rechazado');
+        break;
+      case 'COMMAND_DETAILS_XXX':
+        this.showDetails(event.selectedRows[0]);
+        break;
+      default:
+        throw new Error(`Comando no reconocido: ${event.itemId}`);
+    }
+  }
+
+  private showDetails(item: any): void {
+    this.closeDetails();
+    this._detailsContainer = document.createElement('div');
+    document.body.appendChild(this._detailsContainer);
+    ReactDom.render(
+      React.createElement(DetailsPanelXXX, {
+        item,
+        onDismiss: () => this.closeDetails()
+      }),
+      this._detailsContainer
+    );
+  }
+
+  private closeDetails(): void {
+    if (this._detailsContainer) {
+      ReactDom.unmountComponentAtNode(this._detailsContainer);
+      this._detailsContainer.remove();
+      this._detailsContainer = undefined;
+    }
+  }
+
+  public onDispose(): void {
+    this.closeDetails();
+  }
+}
+
+
+
+
+
+
+
+```
+
+showDetails() crea un contenedor HTML, lo agrega al body y monta DetailsPanelXXX mediante ReactDom.render(). Antes de crear otro contenedor llama a closeDetails().
+
+
+La función onDismiss del panel llama a closeDetails(). Esta función desmonta el componente React, elimina el contenedor y evita dejar elementos residuales. onDispose() también ejecuta closeDetails() cuando la extensión se destruye.
+
+La interacción completa es:
+
+Usuario selecciona proyecto → Ver detalles → onExecute() → selectedRows[0] → DetailsPanelXXX → Fluent UI Panel
+
+## Paso 2. Validar
+
+Selecciona Portal SPFx en Proyectos. Abre Acciones del proyecto y selecciona Ver detalles.
+
+Debe aparecer:
+
+• Detalles del proyecto
+
+• Nombre: Portal SPFx
+
+• Propietario: Miguel
+
+• Estado: Completado
+
+Resultado esperado. Ver detalles abre el panel lateral con la información del elemento seleccionado y el panel puede cerrarse sin dejar el contenedor en la página.
+
+# Actividad 9. Crear el Navigation Customizer
+
+Agregar accesos rápidos a la navegación de SharePoint mediante un Application Customizer.
+
+## Paso 1. Crear el proyecto
+
+Desde PowerShell, cambia a la carpeta de trabajo del laboratorio y ejecuta los siguientes comandos para crear la solución y entrar en ella:
+
+```
 cd C:\SPFx\M4-Extensiones
-```
-
-```text
-mkdir NavigationCustomizer
-```
-
-```text
-cd NavigationCustomizer
-```
-
-```text
+mkdir NavigationCustomizerXXX
+cd NavigationCustomizerXXX
 yo @microsoft/sharepoint
 ```
 
-Seleccionar:
+Cuando se inicie el generador de SharePoint Framework, responde las preguntas con los siguientes valores:
 
-Extension
+1. What is your solution name? → NavigationCustomizerXXX
+
+2. Which type of client-side component to create? → Extension
+
+3. Which type of client-side extension to create? → Application Customizer
+
+4. What is your Application Customizer name? → PortalNavigationXXX
+
+## Paso 2. Abrir el proyecto y verificar dependencias
+
+Cuando termine el generador, abre el proyecto en Visual Studio Code:
+
+```
+code .
+```
+
+En la terminal del proyecto, comprueba las versiones instaladas:
+
+```
+npm list react react-dom @fluentui/react
+```
+
+Si React o React DOM no aparecen con la versión 17.0.1, instala las versiones exactas:
+
+```
+npm install react@17.0.1 react-dom@17.0.1 --save-exact
+```
+
+Si @fluentui/react no está disponible, instálalo con:
+
+```
+npm install @fluentui/react --save-exact
+```
+
+## Paso 3. Definir las propiedades
+
+Las propiedades Links forman parte del archivo completo que se reemplazará en el Paso 5. No modifiques todavía el archivo principal con un fragmento aislado.
+
+## Paso 4. Identificar la navegación
+
+La extensión localizará el contenedor de navegación mediante el selector del DOM que aparece dentro del archivo completo del Paso 5. No copies este selector a otro lugar ni modifiques el archivo por separado.
+
+La extensión no utiliza un tipo de extensión SPFx independiente llamado Navigation Customizer; se implementa como un Application Customizer que modifica el DOM de la navegación. El selector depende de la estructura de la experiencia moderna de SharePoint. Si el selector no devuelve un elemento, la extensión finaliza sin intentar agregar contenido. Esta dependencia del DOM debe considerarse una limitación del ejercicio.
+
+## Paso 5. Reemplazar la clase completa
+
+```
+Archivo: src/extensions/portalNavigationXXX/PortalNavigationXXXApplicationCustomizer.ts
+```
+
+Reemplaza el contenido completo por el archivo final mostrado al terminar este paso. No agregues por separado los fragmentos de propiedades o del selector; ambos ya forman parte de este archivo.
+
+```
+import * as React from 'react';
+import * as ReactDom from 'react-dom';
+
+import {
+  BaseApplicationCustomizer
+} from '@microsoft/sp-application-base';
+
+import {
+  Dropdown,
+  IDropdownOption
+} from '@fluentui/react';
+
+export interface INavigationCustomizerXXXProperties {
+  Links: string[];
+}
+
+export default class PortalNavigationXXX
+  extends BaseApplicationCustomizer<INavigationCustomizerXXXProperties> {
+
+  private _container:
+    HTMLDivElement | undefined;
+
+  public onInit(): Promise<void> {
+    const navBar =
+      document.querySelector(
+        '.ms-compositeHeader-nav'
+      ) as HTMLElement | null;
+
+    if (!navBar) {
+      return Promise.resolve();
+    }
+
+    const options: IDropdownOption[] = [
+      {
+        key: 'teams',
+        text: 'Microsoft Teams'
+      },
+      {
+        key: 'planner',
+        text: 'Planner'
+      },
+      {
+        key: 'outlook',
+        text: 'Outlook'
+      }
+    ];
+
+    this._container =
+      document.createElement('div');
+
+    navBar.appendChild(
+      this._container
+    );
+
+    ReactDom.render(
+      React.createElement(Dropdown, {
+        placeholder: 'Aplicaciones',
+        options,
+        onChange: (
+          _event,
+          option?: IDropdownOption
+        ) => {
+          if (!option) {
+            return;
+          }
+          const target =
+            this.getTargetUrl(option.key as string);
+
+          if (target) {
+            window.location.href = target;
+          }
+        }
+      }),
+      this._container
+    );
+
+    return Promise.resolve();
+  }
+
+  private getTargetUrl(
+    key: string
+  ): string | undefined {
+    const links =
+      this.properties.Links || [];
+
+    const index =
+      key === 'teams'
+        ? 0
+        : key === 'planner'
+          ? 1
+          : key === 'outlook'
+            ? 2
+            : -1;
+
+    return index >= 0
+      ? links[index]
+      : undefined;
+  }
+
+  public onDispose(): void {
+    if (this._container) {
+      ReactDom.unmountComponentAtNode(
+        this._container
+      );
+      this._container.remove();
+      this._container = undefined;
+    }
+  }
+}
+```
+
+La propiedad Links proporciona las direcciones de destino. El código relaciona cada opción con la posición correspondiente del arreglo y navega hacia la dirección seleccionada.
+
+Resultado esperado. La solución PortalNavigationXXX puede localizar la navegación y agregar un contenedor para el menú de aplicaciones.
+
+# Actividad 10. Integrar Fluent UI en el Navigation Customizer
+
+Construir el menú de aplicaciones con Dropdown de Fluent UI.
+
+## Paso 1. Definir las opciones
+
+El menú utiliza tres opciones:
+
+• Microsoft Teams
+
+• Planner
+
+• Outlook
+
+## Paso 2. Renderizar el Dropdown
+
+La clase PortalNavigationXXX crea un contenedor y monta Dropdown dentro de él mediante ReactDom.render. El usuario puede seleccionar una opción y el evento onChange determina el destino.
+
+## Paso 3. Configurar los destinos
+
+Abre config\serve.json y localiza serveConfigurations > default > customActions. En properties, configura Links en el orden Teams, Planner y Outlook. Mantén el GUID que generó Yeoman y sustituye únicamente los valores de Links si el instructor proporciona otras URL. Al finalizar este paso, conserva el archivo completo mostrado a continuación.
+
+```
+Archivoconfig\serve.json
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/serve.schema.json",
+  "port": 4321,
+  "https": true,
+  "serveConfigurations": {
+    "default": {
+      "pageUrl": "https://azurenetecgp1.sharepoint.com/sites/Portal-ProyectosXXX/SitePages/Home.aspx",
+      "customActions": {
+        "GUID-GENERADO-POR-YEOMAN": {
+          "location": "ClientSideExtension.ApplicationCustomizer",
+          "properties": {
+            "Links": [
+              "https://teams.microsoft.com/",
+              "https://planner.cloud.microsoft/",
+              "https://outlook.office.com/"
+            ]
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+No fijes direcciones sensibles o específicas del tenant dentro del código TypeScript cuando puedan configurarse mediante las propiedades de la extensión. Las URL anteriores son ejemplos de prueba; si el instructor proporciona otras, utiliza esas direcciones.
+
+## Paso 4. Validar
+
+En la página de SharePoint debe aparecer el menú Aplicaciones. Al abrirlo deben mostrarse las tres opciones.
+
+Resultado esperado. El menú Aplicaciones aparece en la navegación y contiene Microsoft Teams, Planner y Outlook. La selección dirige al destino configurado.
+
+# Actividad 11. Consultar SharePoint REST y revisar cuándo utilizar Microsoft Graph
+
+Comprobar cómo una extensión puede obtener datos dinámicos de SharePoint y determinar cuándo tendría sentido utilizar Microsoft Graph.
+
+## Paso 1. Probar SharePoint REST
+
+Esta actividad es de comprobación conceptual. No agrega una dependencia de Microsoft Graph a las soluciones del laboratorio. SharePoint REST se prueba directamente en el sitio y Graph solo se considera cuando una necesidad funcional requiere datos que no proporciona la lista o el sitio.
+
+Abre en el navegador la API del sitio de laboratorio, sustituyendo tenant por el dominio de tu entorno:
+
+```
+https://<tuTenant>.sharepoint.com/sites/Portal-ProyectosXXX/_api/web/lists/getbytitle('Proyectos')/items
+```
+
+Comprueba que la respuesta incluya los elementos de la lista Proyectos. La URL utiliza el nombre de la lista y, por tanto, Proyectos debe conservarse exactamente.
+
+## Paso 2. Identificar el uso de Microsoft Graph
+
+Microsoft Graph resulta adecuado cuando la funcionalidad necesita información que no pertenece directamente a los elementos de la lista, por ejemplo usuarios, grupos o equipos.
+
+No agregues permisos de Graph que no sean necesarios para una funcionalidad implementada. Si una extensión no necesita Graph, no solicites permisos adicionales.
+
+Resultado esperado. Puedes distinguir cuándo la información procede de SharePoint REST y cuándo una necesidad funcional justificaría una integración con Microsoft Graph.
+
+# Actividad 12. Compilar cada extensión
+
+Esta actividad se realiza después de completar las actividades de desarrollo anteriores. En este punto ya deben existir todos los archivos que utiliza cada solución, incluido DetailsPanelXXX.tsx del Command Set.
+
+Compilar cada solución por separado y corregir cualquier error antes de generar los paquetes.
 
 Application Customizer
 
-Nombre:
-
-PortalNavigation
-
-Importante
-
-### 11.2. Crear propiedades
-
-```text
-export interface INavigationCustomizerProperties {
+```
+cd C:\SPFx\M4-Extensiones\ApplicationCustomizerXXX
+heft build --production
 ```
 
-```text
-Links: string[];
+Command Set
+
+```
+cd C:\SPFx\M4-Extensiones\CommandSetXXX
+heft build --production
 ```
 
-```text
-}
+Navigation Customizer
+
+```
+cd C:\SPFx\M4-Extensiones\NavigationCustomizerXXX
+heft build --production
 ```
 
-### 11.3. Leer navegación
+No continúes al empaquetado mientras una solución presente errores de compilación. Revisa primero el mensaje mostrado por Heft y corrige el archivo que lo provoca.
 
-El ejemplo del módulo utiliza:
+Resultado esperado. Las tres soluciones terminan heft build sin errores.
 
-```text
-const navBar =
+# Actividad 13. Generar los paquetes
+
+Generar el paquete de producción de cada extensión.
+
+## Paso 1. Empaquetar cada solución
+
 ```
-
-```text
-document.querySelector(
-```
-
-```text
-".ms-compositeHeader-nav"
-```
-
-);
-
-Después verifica:
-
-```text
-if (navBar && this.properties.Links) {
-```
-
-### 11.4. Crear enlaces
-
-Conceptualmente:
-
-```text
-this.properties.Links.forEach(
-```
-
-link => {
-
-```text
-const item =
-```
-
-```text
-document.createElement("a");
-```
-
-item.href = link;
-
-item.innerText =
-
-```text
-"Acceso rápido";
-```
-
-navBar.appendChild(item);
-
-```text
-}
-```
-
-);
-
-El ejemplo del módulo muestra esta misma estrategia.
-
-## ACTIVIDAD 12 — Navigation Customizer con Fluent UI
-
-### Objetivo
-
-Construir un menú de aplicaciones utilizando el componente Dropdown de Fluent UI.
-
-### 12.1. Importar
-
-```text
-import {
-```
-
-Dropdown
-
-```text
-} from '@fluentui/react';
-```
-
-```text
-import * as ReactDom from 'react-dom';
-```
-
-### 12.2. Crear opciones
-
-```text
-const options = [
-```
-
-```text
-{
-```
-
-key: 'teams',
-
-text: 'Microsoft Teams'
-
-```text
-},
-```
-
-```text
-{
-```
-
-key: 'planner',
-
-text: 'Planner'
-
-```text
-},
-```
-
-```text
-{
-```
-
-key: 'outlook',
-
-text: 'Outlook'
-
-```text
-}
-```
-
-];
-
-### 12.3. Crear el Dropdown
-
-```text
-const navMenu =
-```
-
-```text
-document.createElement("div");
-```
-
-```text
-ReactDom.render(
-```
-
-```text
-<Dropdown
-```
-
-placeholder="Aplicaciones"
-
-options={options}
-
-/>,
-
-navMenu
-
-);
-
-### 12.4. Insertarlo
-
-```text
-document.body.insertBefore(
-```
-
-navMenu,
-
-```text
-document.body.firstChild
-```
-
-);
-
-Aplicaciones ▼
-
-Al abrir:
-
-Microsoft Teams
-
-- Planner
-- Outlook
-## ACTIVIDAD 13 — Integrar SharePoint REST y Graph
-
-Comprobar cómo una extensión puede obtener datos dinámicos de SharePoint y cuándo tendría sentido utilizar Microsoft Graph.
-
-### Paso 1. Probar SharePoint REST
-
-Abre en el navegador la API del sitio de laboratorio, sustituyendo la URL por la de tu tenant:
-
-```text
-https://<tenant>.sharepoint.com/sites/PortalProyectos/_api/web/lists/getbytitle('Proyectos')/items
-```
-
-Comprueba que la respuesta incluya los elementos de la lista Proyectos.
-
-### Paso 2. Identificar el uso de Microsoft Graph
-
-Identifica qué información adicional podría aportar Graph, por ejemplo usuarios, grupos o equipos.
-
-No agregues permisos de Graph que no sean necesarios para una funcionalidad implementada.
-
-## ACTIVIDAD 14 — Compilar cada extensión
-
-Compila cada solución por separado y corrige cualquier error antes de continuar.
-
-ApplicationCustomizer:
-
-```text
-cd C:\SPFx\M4-Extensiones\ApplicationCustomizer
-```
-
-```text
-heft build
-```
-
-FieldCustomizer:
-
-```text
-cd C:\SPFx\M4-Extensiones\FieldCustomizer
-```
-
-```text
-heft build
-```
-
-CommandSet:
-
-```text
-cd C:\SPFx\M4-Extensiones\CommandSet
-```
-
-```text
-heft build
-```
-
-NavigationCustomizer:
-
-```text
-cd C:\SPFx\M4-Extensiones\NavigationCustomizer
-```
-
-```text
-heft build
-```
-
-## ACTIVIDAD 15 — Generar los paquetes
-
-Genera el paquete de producción de cada extensión.
-
-En cada proyecto ejecuta:
-
-```text
+cd C:\SPFx\M4-Extensiones\ApplicationCustomizerXXX
+heft package-solution --production
+cd C:\SPFx\M4-Extensiones\CommandSetXXX
+heft package-solution --production
+cd C:\SPFx\M4-Extensiones\NavigationCustomizerXXX
 heft package-solution --production
 ```
 
-Localiza el archivo .sppkg en sharepoint/solution/.
+## Paso 2. Localizar los paquetes
 
-Repite el procedimiento para ApplicationCustomizer, FieldCustomizer, CommandSet y NavigationCustomizer.
+En cada proyecto, localiza el archivo .sppkg generado dentro de sharepoint/solution/.
 
-## ACTIVIDAD 16 — Publicar en App Catalog
+Resultado esperado. Se dispone de tres paquetes .sppkg, uno por cada solución: Application Customizer, Command Set y Navigation Customizer.
 
-### Objetivo
+# Actividad 14. Publicar en el App Catalog
 
-Cargar los cuatro paquetes en el App Catalog de SharePoint.
+Publicar los paquetes generados en el App Catalog compartido del tenant.
 
-### Paso 1
+## Paso 1. Localizar los paquetes
 
-Abrir:
+Localiza los tres archivos .sppkg generados en la Actividad 13.
 
-SharePoint Admin Center
+## Paso 2. Entregar los paquetes
 
-### Paso 2
+Entrega al instructor los paquetes correspondientes a las tres soluciones desarrolladas en este laboratorio.
 
-Abrir:
+## Paso 3. Publicación
 
-App Catalog
+El instructor cargará los archivos .sppkg en la biblioteca Apps for SharePoint del App Catalog compartido y completará la implementación de las soluciones.
 
-### Paso 3
+Importante. Utiliza únicamente el App Catalog compartido asignado al tenant. No crees un catálogo adicional.
 
-Entrar en:
+Resultado esperado. Los tres paquetes .sppkg fueron entregados al instructor para su publicación en el App Catalog compartido.
 
-Apps for SharePoint
+# Actividad 15. Asociar las extensiones al sitio
 
-### Paso 4
+Verificar que las tres soluciones estén disponibles en Portal-ProyectosXXX y que cada extensión esté asociada con la superficie que debe personalizar.
 
-Cargar:
+## Paso 1. Abrir el sitio
 
-ApplicationCustomizer.sppkg
-
-Después:
-
-FieldCustomizer.sppkg
-
-Después:
-
-CommandSet.sppkg
-
-Y finalmente:
-
-NavigationCustomizer.sppkg
-
-## ACTIVIDAD 17 — Asociar las extensiones al sitio
-
-Verifica que las cuatro soluciones estén disponibles en el sitio Portal de Proyectos y que cada extensión esté asociada a la superficie que debe personalizar.
-
-Abre:
-
-```text
-https://<tenant>.sharepoint.com/sites/PortalProyectos
+```
+https://azurenetecgp1.sharepoint.com/sites/Portal-ProyectosXXX
 ```
 
-Comprueba por separado la página, la lista Proyectos y la navegación.
+## Paso 2. Comprobar cada superficie
 
-Si una extensión no aparece, revisa el paquete publicado, su implementación en el App Catalog y la configuración del manifiesto.
+• Página: comprobar el Application Customizer y el mensaje global.
 
-## ACTIVIDAD 18 — Prueba integral
+• Elementos de Proyectos: comprobar el Command Set y sus comandos.
 
-Esta es la actividad más importante.
+• Navegación: comprobar el Navigation Customizer y el menú Aplicaciones.
 
-### Prueba 1 — Application Customizer
+## Paso 3. Resolver una extensión que no aparezca
 
-Abrir:
+Si una extensión no aparece, revisa el paquete publicado, su implementación en el App Catalog y la configuración del manifiesto. Comprueba también que la extensión esté asociada a la superficie correcta.
 
-Portal de Proyectos
+Resultado esperado. Las tres extensiones están disponibles en Portal-ProyectosXXX y cada una actúa únicamente sobre la superficie prevista.
 
-Comprueba que aparezca:
+# Actividad 16. Prueba integral
 
-Bienvenido al Portal de Proyectos
+Comprobar el funcionamiento conjunto de las extensiones.
 
-### Prueba 2 — Navigation Customizer
+## Prueba 1. Application Customizer
 
-La navegación debe mostrar:
+Abre Portal-ProyectosXXX y comprueba que aparezca el mensaje:
 
-Aplicaciones ▼
+Bienvenido al Portal-ProyectosXXX
 
-Al abrir:
+## Prueba 2. Navigation Customizer
 
-- Teams
-- Planner
-- Outlook
-### Prueba 3 — Field Customizer
+Comprueba que la navegación muestre Aplicaciones. Al abrir el menú deben aparecer:
 
-Abrir:
+• Teams
 
-Proyectos
+• Planner
 
-Verificar que Status tenga representación visual.
+• Outlook
 
-✓ Completado
+## Prueba 3. Command Set
 
-◷ En progreso
+Selecciona un proyecto y comprueba que aparezca Acciones del proyecto con:
 
-○ Pendiente
+• Aprobar
 
-### Prueba 4 — Command Set
+• Rechazar
 
-Seleccionar un proyecto.
+• Ver detalles
 
-Comprueba que aparezca:
+## Prueba 4. Panel
 
-- Acciones del proyecto
-con:
+Selecciona Ver detalles. Debe abrirse Detalles del proyecto con:
 
-- Aprobar
-- Rechazar
-- Ver detalles
-### Prueba 5 — Panel
+• Nombre
 
-Seleccionar:
+• Propietario
 
-- Ver detalles
-Debe abrir:
+• Estado
 
-Detalles del proyecto
+## Comprobación final
 
-con:
+☐ El entorno utiliza SPFx 1.23.2, Node.js 22 LTS y Heft.
 
-Nombre
+☐ El sitio de trabajo es Portal-ProyectosXXX.
 
-Propietario
+☐ Existe la lista Proyectos con los campos necesarios.
 
-Estado
+☐ Application Customizer funciona en el sitio del participante.
 
-6. Flujo completo de ejecución
+☐ Command Set aparece para los elementos seleccionados.
 
-El usuario interactúa con SharePoint Online y cada extensión recibe el contexto de la superficie que personaliza. Application Customizer trabaja sobre la experiencia global; Field Customizer sobre las celdas de una columna; Command Set sobre acciones de elementos; y Navigation Customizer sobre los accesos de navegación. React y Fluent UI pueden utilizarse para la presentación, mientras SharePoint REST y Microsoft Graph aportan datos cuando la funcionalidad lo requiere.
+☐ Ver detalles abre el panel con la información del proyecto.
 
-7. ¿Qué sucede técnicamente en cada extensión?
+☐ La navegación personalizada muestra los accesos configurados.
 
-Application Customizer
+☐ Las extensiones utilizan Fluent UI donde corresponde.
 
-Página carga
+☐ SharePoint REST se utiliza para consultar los datos requeridos.
 
-SPFx carga extensión
+☐ Microsoft Graph no se agregó como dependencia cuando la funcionalidad del laboratorio no lo requiere.
 
-onInit()
+☐ Las soluciones no utilizan despliegue tenant-wide.
 
-Contexto + propiedades
+☐ Se generaron los paquetes .sppkg.
 
-DOM / React / Fluent UI
+☐ El instructor publicó las soluciones en el App Catalog compartido.
 
-Banner o contenido global
+☐ Las extensiones fueron asociadas únicamente al sitio Portal-ProyectosXXX.
 
-Field Customizer
+☐ La prueba integral se ejecutó correctamente.
 
-Lista carga
+Resultado esperado. Las tres extensiones funcionan en conjunto y cada una personaliza la superficie de SharePoint definida en el laboratorio.
 
-SharePoint identifica columna personalizada
+## Archivos de código completo
 
-SPFx carga Field Customizer
+La carpeta de código entregada junto con este documento contiene los archivos completos utilizados en las tres extensiones. Los archivos que se muestran en las actividades incluyen el código final que debe quedar en cada caso.
 
-onRenderCell()
-
-```text
-event.fieldValue
-```
-
-StatusBadge
-
-DOM de la celda
-
-Este flujo aparece representado explícitamente en el material del módulo.
-
-Command Set
-
-Usuario selecciona elemento
-
-Selecciona comando
-
-onExecute()
-
-```text
-event.itemId
-```
-
-Lógica específica
-
-Dialog / Panel / API
-
-- Ver detalles
-Elemento seleccionado
-
-DetailsPanel
-
-Fluent UI Panel
-
-Información del proyecto
-
-Navigation Customizer
-
-Página carga
-
-onInit()
-
-Contexto de navegación
-
-Links / Dropdown
-
-Menú personalizado
-
-## 8. Casos de uso empresariales
-
-El laboratorio representa escenarios reales.
-
-Application Customizer
-
-Puede utilizarse para:
-
-avisos corporativos;
-
-alertas de mantenimiento;
-
-branding;
-
-accesos globales.
-
-Estos casos están contemplados por el módulo.
-
-Field Customizer
-
-Puede utilizarse para:
-
-estados;
-
-prioridades;
-
-indicadores;
-
-iconos;
-
-validaciones visuales;
-
-acciones rápidas.
-
-Command Set
-
-Puede utilizarse para:
-
-aprobar;
-
-rechazar;
-
-mover;
-
-actualizar;
-
-enviar información;
-
-abrir detalles.
-
-Paneles
-
-Son útiles cuando:
-
-Usuario está en una lista
-
-Necesita más información
-
-No queremos enviarlo a otra página
-
-Abrimos Panel
-
-Navigation Customizer
-
-Puede utilizarse para:
-
-accesos rápidos;
-
-aplicaciones corporativas;
-
-menús personalizados;
-
-integración con Teams;
-
-branding.
-
-## 9. Buenas prácticas que debe aplicar el alumno
-
-### 9.1. No modificar datos para cambiar su presentación
-
-El Field Customizer debe cambiar:
-
-presentación
-
-no:
-
-dato almacenado
-
-Esto es una diferencia fundamental del módulo.
-
-### 9.2. Separar lógica y presentación
-
-Utilizar:
-
-```text
-StatusFieldCustomizer.ts
-```
-
-StatusBadge.tsx
-
-en lugar de colocar todo en un único archivo.
-
-### 9.3. Limpiar recursos
-
-Siempre considerar:
-
-onDisposeCell()
-
-cuando se utilice React dentro de un Field Customizer.
-
-### 9.4. Utilizar Fluent UI
-
-Cuando exista un componente apropiado, preferir:
-
-MessageBar
-
-Label
-
-Icon
-
-Text
-
-Dropdown
-
-en lugar de construir manualmente todos los elementos HTML.
-
-### 9.5. Agrupar acciones relacionadas
-
-En lugar de:
-
-- Aprobar
-- Rechazar
-Detalles
-
-como acciones dispersas:
-
-- Acciones del proyecto
-- Aprobar
-- Rechazar
-Detalles
-
-Esto corresponde directamente a la recomendación de agrupación del módulo.
-
-## 10. Problemas frecuentes y solución
-
-### Problema 1 — yo no se reconoce
-
-Verificar:
-
-```text
-npm install yo --global
-```
-
-y cerrar/reabrir PowerShell.
-
-### Problema 2 — node no se reconoce
-
-Node.js no está instalado o no está en PATH.
-
-Comprobar:
-
-```text
-node --version
-```
-
-### Problema 3 — La extensión no aparece
-
-Revisar:
-
-App Catalog
-
-Paquete .sppkg
-
-Aplicación desplegada
-
-Sitio correcto
-
-### Problema 4 — Field Customizer no modifica la columna
-
-Comprobar:
-
-Nombre interno de columna
-
-Manifiesto/configuración
-
-Columna correcta
-
-No confundir:
-
-Display Name
-
-con:
-
-Internal Name
-
-### Problema 5 — Command Set no aparece
-
-Comprobar:
-
-Se seleccionó un elemento de la lista.
-
-El comando está configurado para esa lista.
-
-El paquete fue desplegado.
-
-La extensión está instalada.
-
-El manifiesto contiene los IDs correctos.
-
-### Problema 6 — Aparece el comando pero no ocurre nada
-
-Revisar:
-
-```text
-event.itemId
-```
-
-y comparar contra:
-
-COMMAND_APPROVE
-
-COMMAND_REJECT
-
-COMMAND_DETAILS
-
-### Problema 7 — El panel no recibe información
-
-Verificar:
-
-```text
-event.selectedRows[0]
-```
-
-y que el objeto se esté pasando a:
-
-DetailsPanel
-
-## 11. Resultado final del laboratorio
-
-El Portal de Proyectos quedará personalizado con un banner global, una representación visual de Status, comandos para gestionar proyectos, un panel de detalles y accesos rápidos de navegación. Las cuatro extensiones se distribuirán mediante paquetes .sppkg y se probarán en SharePoint Online.
-
-## 12. Evidencias del laboratorio
-
-### Evidencia 1 — Ambiente
-
-Captura de:
-
-```text
-node --version
-```
-
-```text
-npm --version
-```
-
-```text
-yo --version
-```
-
-```text
-heft --version
-```
-
-### Evidencia 2 — Site Collection
-
-Captura de:
-
-Portal de Proyectos
-
-### Evidencia 3 — Lista
-
-Captura de:
-
-Proyectos
-
-con al menos cuatro registros.
-
-### Evidencia 4 — Application Customizer
-
-Captura del:
-
-Banner superior
-
-### Evidencia 5 — Field Customizer
-
-Captura donde Status tenga renderizado personalizado.
-
-### Evidencia 6 — Command Set
-
-Captura del menú:
-
-- Acciones del proyecto
-### Evidencia 7 — Panel
-
-Captura de:
-
-Detalles del proyecto
-
-### Evidencia 8 — Navigation Customizer
-
-Captura de:
-
-Aplicaciones ▼
-
-### Evidencia 9 — App Catalog
-
-Captura de los paquetes:
-
-ApplicationCustomizer.sppkg
-
-FieldCustomizer.sppkg
-
-CommandSet.sppkg
-
-NavigationCustomizer.sppkg
-
-## 13. Lista de comprobación final
-
-## 14. Resultado de aprendizaje
-
-Al terminar el laboratorio, podrás distinguir qué superficie de SharePoint modifica cada extensión y elegirla según la necesidad: Web Part para una zona de página, Application Customizer para la experiencia global, Field Customizer para la presentación de una columna, Command Set para acciones sobre elementos y Navigation Customizer para accesos y navegación.
-
-## 15. Resultado integral del laboratorio
-
-El laboratorio integra SPFx, TypeScript, React, Fluent UI y las APIs de SharePoint en una solución que personaliza distintas superficies de SharePoint Online mediante extensiones independientes.
-
-Al finalizar, el alumno habrá pasado de simplemente crear componentes SPFx a extender la interfaz de SharePoint:
-
-La arquitectura final integra SPFx + TypeScript + React + Fluent UI + SharePoint + APIs, que es precisamente la orientación del laboratorio del módulo: personalizar listas, menús y navegación de SharePoint Online mediante extensiones avanzadas.
-
-Referencias técnicas oficiales
-
-Para la preparación del entorno moderno de SPFx, Microsoft documenta Node.js 22 LTS, Heft, Yeoman y el generador de SharePoint.
-
-Configuración del entorno de desarrollo de SharePoint Framework — Microsoft Learn
-
-Extender la interfaz de SharePoint con extensiones SPFx — Microsoft Learn
-
-Application Customizers — Microsoft Learn
-
-Field Customizers — Microsoft Learn
-
-Command Sets — Microsoft Learn
-
-Navigation Customizers — Microsoft Learn
-
-| Tema | Aplicación en el laboratorio |
-|---|---|
-| 4.1 Application Customizers | Banner global y mensaje corporativo |
-| 4.1 Custom Script / DOM | Inserción controlada de elementos |
-| 4.1 Contexto y propiedades | Mensajes configurables |
-| 4.1 Fluent UI | MessageBar |
-| 4.1 SharePoint / Graph | Preparación para datos dinámicos |
-| 4.2 Field Customizers | Columna Status |
-| 4.2 BaseFieldCustomizer | Clase principal |
-| 4.2 onRenderCell() | Renderizado de cada celda |
-| 4.2 onDisposeCell() | Liberación de recursos |
-| 4.2 React | StatusBadge |
-| 4.2 Fluent UI | Label, Icon |
-| 4.3 Command Sets | Aprobar, rechazar y ver detalles |
-| 4.3 BaseListViewCommandSet | Clase base |
-| 4.3 onExecute() | Procesamiento del comando |
-| 4.4 Agrupación | Grupo “Acciones del proyecto” |
-| 4.4 Panel personalizado | Panel de detalles |
-| 4.4 Fluent UI | Panel, Text |
-| 4.5 Navigation Customizer | Accesos rápidos |
-| 4.5 Propiedades | Lista de enlaces |
-| 4.5 Fluent UI | Dropdown |
-| 4.5 APIs | Base para navegación dinámica |
-| Despliegue | App Catalog + Site Collection |
-
-| Columna | Tipo |
-|---|---|
-| Title | Texto |
-| Owner | Texto |
-| Status | Elección |
-| Description | Varias líneas |
-
-| Proyecto | Owner | Status |
-|---|---|---|
-| Portal SPFx | Ana | Completado |
-| Migración M365 | Carlos | En progreso |
-| Automatización | Miguel | Pendiente |
-| Intranet | Laura | Rechazado |
-
-| Criterio | Cumplido |
-|---|---|
-| Node.js instalado | ☐ |
-| npm funcionando | ☐ |
-| Visual Studio Code instalado | ☐ |
-| Yeoman instalado | ☐ |
-| Generador SPFx instalado | ☐ |
-| Heft instalado | ☐ |
-| Site Collection creado | ☐ |
-| Lista Proyectos creada | ☐ |
-| Datos de prueba creados | ☐ |
-| Application Customizer creado | ☐ |
-| BaseApplicationCustomizer utilizado | ☐ |
-| onInit() implementado | ☐ |
-| Propiedades configurables utilizadas | ☐ |
-| Banner superior funcionando | ☐ |
-| Footer/mensaje global funcionando | ☐ |
-| Fluent UI integrado | ☐ |
-| Field Customizer creado | ☐ |
-| BaseFieldCustomizer utilizado | ☐ |
-| onRenderCell() implementado | ☐ |
-| onDisposeCell() implementado | ☐ |
-| React utilizado para renderizar celda | ☐ |
-| StatusBadge creado | ☐ |
-| Fluent UI utilizado en la celda | ☐ |
-| Command Set creado | ☐ |
-| BaseListViewCommandSet utilizado | ☐ |
-| onExecute() implementado | ☐ |
-| Comando Aprobar | ☐ |
-| Comando Rechazar | ☐ |
-| Comando Ver detalles | ☐ |
-| Comandos agrupados | ☐ |
-| Panel personalizado creado | ☐ |
-| Fluent UI Panel utilizado | ☐ |
-| Navigation Customizer creado | ☐ |
-| Enlaces personalizados funcionando | ☐ |
-| Dropdown de aplicaciones funcionando | ☐ |
-| SharePoint REST comprendido | ☐ |
-| Microsoft Graph identificado como integración | ☐ |
-| Soluciones compiladas | ☐ |
-| Paquetes .sppkg generados | ☐ |
-| Soluciones publicadas en App Catalog | ☐ |
-| Extensiones probadas en SharePoint | ☐ |
+| Extensión | Archivos completos |
+| --- | --- |
+| Application Customizer | PortalBannerXXXApplicationCustomizer.ts |
+| Command Set | ProjectCommandSetXXXCommandSet.ts; DetailsPanelXXX.tsx; ProjectCommandSetXXXCommandSet.manifest.json |
+| Navigation Customizer | PortalNavigationXXXApplicationCustomizer.ts |
